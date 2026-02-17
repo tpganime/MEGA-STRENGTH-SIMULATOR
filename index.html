@@ -14,16 +14,16 @@
         :root {
             --neon-orange: #FF8C00;
             --neon-blue: #00BFFF;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --mouse-x: 0.5;
             --mouse-y: 0.5;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.12);
         }
         .font-bangers { font-family: 'Bangers', cursive; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0a0a0a; 
+            background-color: #080808; 
             color: #ffffff;
             margin: 0;
             overflow-x: hidden;
@@ -31,115 +31,85 @@
             perspective: 2000px;
         }
 
-        /* Technical Grid Background */
+        /* Technical Grid Background - Inspired by Reference Photo */
         .grid-background {
             position: fixed;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center;
             z-index: -2;
             pointer-events: none;
+            opacity: 0.8;
         }
 
         .temporal-warp {
             position: fixed;
             inset: -20%;
             background: 
-                radial-gradient(circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), rgba(255, 140, 0, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at calc(100% - (var(--mouse-x) * 100%)) calc(100% - (var(--mouse-y) * 100%)), rgba(0, 191, 255, 0.06) 0%, transparent 40%);
+                radial-gradient(circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), rgba(255, 140, 0, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at calc(100% - (var(--mouse-x) * 100%)) calc(100% - (var(--mouse-y) * 100%)), rgba(0, 191, 255, 0.04) 0%, transparent 45%);
             z-index: -1;
-            filter: blur(100px);
-            animation: pulse-warp 15s ease-in-out infinite alternate;
+            filter: blur(120px);
         }
 
-        @keyframes pulse-warp {
-            from { transform: scale(1); opacity: 0.5; }
-            to { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        /* Advanced Liquid Glass Effect */
+        /* High-Fidelity Liquid Glass Effect */
         .liquid-glass {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(160%);
+            backdrop-filter: blur(28px) saturate(180%);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            border-radius: 40px;
             box-shadow: 
-                0 10px 40px -10px rgba(0, 0, 0, 0.5),
-                inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
-                inset 0 10px 20px -5px rgba(255, 255, 255, 0.05);
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+                0 10px 30px -5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+                inset 0 15px 25px -10px rgba(255, 255, 255, 0.05);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
         }
 
-        /* Refractive Highlight Layer */
-        .liquid-glass::after {
+        .liquid-glass::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%);
             pointer-events: none;
+            z-index: 1;
         }
 
         .liquid-glass:hover {
-            border-color: rgba(255, 255, 255, 0.25);
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-4px) translateZ(20px);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-8px) translateZ(30px);
             box-shadow: 
-                0 20px 50px -15px rgba(0, 0, 0, 0.6),
-                inset 0 1px 2px 0 rgba(255, 255, 255, 0.2);
+                0 40px 80px -20px rgba(0, 0, 0, 0.8),
+                inset 0 1px 2px 0 rgba(255, 255, 255, 0.3);
         }
 
-        /* Interactive 3D Card */
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .card-3d:hover {
-            transform: rotateX(5deg) rotateY(-5deg);
-        }
+        .card-3d { transform-style: preserve-3d; }
 
         .animate-titan-glow {
-            animation: titanGlow 4s ease-in-out infinite;
+            animation: titanGlow 5s ease-in-out infinite;
         }
 
         @keyframes titanGlow {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.2)); text-shadow: 0 0 10px rgba(255, 140, 0, 0.2); }
-            50% { filter: drop-shadow(0 0 40px rgba(255, 140, 0, 0.5)); text-shadow: 0 0 20px rgba(255, 140, 0, 0.4); }
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.1)); }
+            50% { filter: drop-shadow(0 0 50px rgba(255, 140, 0, 0.4)); }
         }
 
-        .text-4d {
-            text-shadow: 0 0 10px rgba(255,140,0,0.1), 0 10px 20px rgba(0,0,0,0.3);
-            transform: translateZ(40px);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { 
-            background: rgba(255, 255, 255, 0.1); 
-            border-radius: 10px; 
-            backdrop-filter: blur(10px);
-        }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-orange); }
-
-        /* Loader */
         #initial-loader {
             position: fixed;
             inset: 0;
-            background: #0a0a0a;
+            background: #080808;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 99999;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .spin { animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+        .spin { animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
     </style>
     <script type="importmap">
 {
@@ -158,11 +128,11 @@
 </head>
 <body>
     <div id="initial-loader">
-        <div class="relative">
-            <div class="w-16 h-16 border border-white/5 rounded-full"></div>
-            <div class="absolute inset-0 w-16 h-16 border-t-2 border-[#FF8C00] rounded-full spin"></div>
+        <div class="relative w-20 h-20">
+            <div class="absolute inset-0 border-2 border-white/5 rounded-full"></div>
+            <div class="absolute inset-0 border-t-2 border-[#FF8C00] rounded-full spin"></div>
         </div>
-        <p class="mt-8 font-bangers tracking-[0.6em] text-white text-xl uppercase animate-pulse">SYNCHRONIZING REALITY</p>
+        <p class="mt-10 font-bangers tracking-[0.8em] text-white/40 text-sm uppercase animate-pulse">RECONSTRUCTING ASSETS</p>
     </div>
     <div class="grid-background"></div>
     <div class="temporal-warp"></div>

@@ -30,53 +30,52 @@ const AdminLogin: React.FC<Props> = ({ isOpen, onClose, onLogin }) => {
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="relative bg-zinc-900 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-neon-orange"></div>
-        <button onClick={onClose} className="absolute top-6 right-6 text-gray-500 hover:text-white">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose}></div>
+      <div className="relative liquid-glass !rounded-[50px] w-full max-w-md p-10 md:p-12 shadow-2xl card-3d">
+        <button onClick={onClose} className="absolute top-8 right-8 text-white/30 hover:text-white transition-colors">
           <X className="w-6 h-6" />
         </button>
 
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-neon-orange/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-neon-orange/30">
-            <Lock className="w-8 h-8 text-neon-orange" />
+        <div className="text-center mb-10">
+          <div className="w-20 h-20 liquid-glass !bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-[#FF8C00]" />
           </div>
-          <h2 className="text-3xl font-bangers tracking-wide text-white">ADMIN TERMINAL</h2>
-          <p className="text-gray-500 text-sm">Authorized Personnel Only</p>
+          <h2 className="text-4xl font-bangers tracking-wide text-white">ADMIN TERMINAL</h2>
+          <p className="text-white/40 text-xs font-black uppercase tracking-[0.3em] mt-2">Authorized Personnel Only</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm flex items-start gap-3">
+          <div className="mb-8 p-5 liquid-glass !bg-red-500/10 !border-red-500/20 text-red-500 rounded-2xl text-sm flex items-start gap-4">
             <AlertCircle className="w-5 h-5 shrink-0" />
-            {error}
+            <span className="font-bold">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black text-white/30 uppercase tracking-[0.4em] ml-2">Secure Link ID</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
               <input 
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-black border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-neon-orange transition-colors"
+                className="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-white focus:outline-none focus:border-[#FF8C00]/50 transition-all"
                 placeholder="developer@studio.com"
                 required
               />
             </div>
           </div>
           
-          <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Secure Password</label>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black text-white/30 uppercase tracking-[0.4em] ml-2">Access Key</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
               <input 
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-black border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-neon-orange transition-colors"
+                className="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-white focus:outline-none focus:border-[#FF8C00]/50 transition-all"
                 placeholder="••••••••"
                 required
               />
@@ -86,9 +85,9 @@ const AdminLogin: React.FC<Props> = ({ isOpen, onClose, onLogin }) => {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-neon-orange text-black font-black text-lg py-4 rounded-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100"
+            className="w-full bg-white text-black font-black text-xl py-6 rounded-2xl hover:scale-[1.05] active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 uppercase tracking-widest italic"
           >
-            {loading ? 'AUTHENTICATING...' : 'ACCESS DASHBOARD'}
+            {loading ? 'SYNCING...' : 'INITIATE SESSION'}
           </button>
         </form>
       </div>
