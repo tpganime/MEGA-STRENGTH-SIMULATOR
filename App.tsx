@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
 import CodeSection from './components/CodeSection.tsx';
 import UpdateLog from './components/UpdateLog.tsx';
 import SecretTrigger from './components/SecretTrigger.tsx';
 import AdminLogin from './components/AdminLogin.tsx';
-import AdminDashboard from './components/AdminDashboard.tsx';
+import AdminDashboard from './AdminDashboard.tsx';
 import PrivacyModal from './components/PrivacyModal.tsx';
-import { MessageSquare, ExternalLink } from 'lucide-react';
+import { MessageSquare, ExternalLink, Activity, Trophy } from 'lucide-react';
 import { GameCode, UpdateLog as UpdateLogType, AuthState, Branding } from './types.ts';
 import { storageService } from './services/storageService.ts';
 
@@ -28,17 +28,6 @@ const App: React.FC = () => {
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [auth, setAuth] = useState<AuthState>({ isLoggedIn: false, email: null });
 
-  const hideLoader = () => {
-    const loader = document.getElementById('initial-loader');
-    if (loader) {
-      loader.style.opacity = '0';
-      loader.style.pointerEvents = 'none';
-      setTimeout(() => {
-        if (loader.parentNode) loader.parentNode.removeChild(loader);
-      }, 500);
-    }
-  };
-
   const fetchData = async () => {
     try {
       const [c, l, b] = await Promise.all([
@@ -51,9 +40,7 @@ const App: React.FC = () => {
       if (l && l.length) setLogs(l);
       if (b) setBranding(b);
     } catch (err) {
-      console.warn('Data fetch issue:', err);
-    } finally {
-      hideLoader();
+      console.warn('Data sync issue:', err);
     }
   };
 
@@ -71,21 +58,17 @@ const App: React.FC = () => {
       }
     }
 
-    // High Performance Multidimensional Observer
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
         }
       });
-    }, { 
-      threshold: 0.05,
-      rootMargin: '0px 0px -100px 0px'
-    });
+    }, { threshold: 0.1 });
 
     const timer = setTimeout(() => {
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    }, 150);
+    }, 500);
 
     return () => {
       observer.disconnect();
@@ -101,7 +84,6 @@ const App: React.FC = () => {
       const session = { isLoggedIn: true, email };
       setAuth(session);
       localStorage.setItem('mss_admin_auth', JSON.stringify(session));
-      setIsAdminModalOpen(true);
       return true;
     }
     return false;
@@ -113,97 +95,105 @@ const App: React.FC = () => {
     setIsAdminModalOpen(false);
   };
 
-  const handleOpenAdmin = () => {
-    setIsAdminModalOpen(true);
-  };
-
-  const handleCloseAdmin = () => {
-    setIsAdminModalOpen(false);
-  };
-
-  const togglePrivacy = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsPrivacyModalOpen(!isPrivacyModalOpen);
-  };
-
   return (
-    <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white overflow-x-hidden" style={{ transformStyle: 'preserve-3d' }}>
-      <Navbar logoUrl={branding.logo_url} onOpenAdmin={handleOpenAdmin} />
+    <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white transition-colors">
+      <Navbar logoUrl={branding.logo_url} onOpenAdmin={() => setIsAdminModalOpen(true)} />
       
-      <main className="relative" style={{ transformStyle: 'preserve-3d' }}>
-        {/* 2D/3D Hero */}
+      <main className="relative z-10 flex-1">
         <div className="reveal">
           <Hero 
             bannerUrl={branding.banner_url} 
-            onOpenAdmin={handleOpenAdmin} 
+            onOpenAdmin={() => setIsAdminModalOpen(true)} 
           />
         </div>
 
-        {/* 3D Grid Content */}
-        <div className="max-w-7xl mx-auto px-4 py-40" style={{ transformStyle: 'preserve-3d' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start" style={{ transformStyle: 'preserve-3d' }}>
-            <div className="reveal" style={{ transitionDelay: '0.1s' }}>
+        <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 space-y-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-start">
+            <div className="reveal relative" style={{ transitionDelay: '0.1s' }}>
+              {/* Subtle glow behind section */}
+              <div className="absolute -inset-20 bg-[#ff7b00]/5 blur-[100px] -z-10 rounded-full"></div>
               <CodeSection codes={codes} />
             </div>
-            <div className="reveal" style={{ transitionDelay: '0.3s' }}>
+            <div className="reveal relative" style={{ transitionDelay: '0.3s' }}>
+              <div className="absolute -inset-20 bg-[#3a86ff]/5 blur-[100px] -z-10 rounded-full"></div>
               <UpdateLog logs={logs} />
             </div>
           </div>
         </div>
 
-        {/* 4D Immersive Section */}
-        <section className="py-40 bg-white/20 backdrop-blur-3xl reveal" style={{ transformStyle: 'preserve-3d' }}>
-          <div className="max-w-7xl mx-auto px-4" style={{ transformStyle: 'preserve-3d' }}>
-             <div className="liquid-glass p-16 md:p-24 rounded-[4rem] flex flex-col items-center text-center shadow-3xl group" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="max-w-3xl" style={{ transform: 'translateZ(50px)' }}>
-                  <h2 className="text-6xl md:text-8xl font-black text-[#1d1d1f] mb-10 uppercase italic tracking-tighter transition-all group-hover:tracking-normal">
-                    JOIN THE <span className="text-[#ff7b00]">MEGA STRENGTH</span> SIMULATOR
-                  </h2>
-                  <p className="text-[#86868b] text-2xl font-bold mb-16 leading-relaxed uppercase tracking-widest opacity-80">Connect with our core developer network and thousands of active titans.</p>
+        {/* CTA Section - Responsive Full Width */}
+        <section className="py-24 md:py-32 reveal px-6">
+           <div className="max-w-5xl mx-auto bg-white/90 backdrop-blur-2xl rounded-[3rem] p-10 md:p-20 flex flex-col items-center text-center shadow-2xl border border-white relative overflow-hidden group">
+              {/* Internal glow for CTA */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-[#ff7b00]/10 to-transparent pointer-events-none opacity-50"></div>
+              
+              <div className="relative z-10 w-full">
+                <div className="flex flex-col items-center justify-center gap-2 mb-10 text-[#ff7b00]">
+                  <Trophy size={48} className="md:size-64 drop-shadow-[0_0_20px_rgba(255,123,0,0.4)]" />
+                  <span className="text-xs md:text-sm font-black uppercase tracking-[0.5em]">WORLD CLASS STRENGTH</span>
                 </div>
-                <div className="flex flex-wrap justify-center gap-10" style={{ transform: 'translateZ(100px)' }}>
-                   <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="bg-[#5865F2] text-white px-16 py-8 rounded-[30px] font-black text-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-5 shadow-2xl italic uppercase tracking-widest cursor-pointer">
-                      <MessageSquare size={32} />
-                      DISCORD
-                   </a>
-                   <a href={ROBLOX_LINK} target="_blank" rel="noopener noreferrer" className="liquid-glass !bg-black text-white px-16 py-8 rounded-[30px] font-black text-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-5 shadow-2xl italic uppercase tracking-widest border-transparent cursor-pointer">
-                      <ExternalLink size={32} />
-                      GROUP
-                   </a>
+                
+                <h2 className="flex flex-col gap-0 text-6xl md:text-9xl font-black text-[#1d1d1f] mb-12 uppercase italic tracking-tighter leading-none select-none">
+                  <span className="block">MEGA</span>
+                  <span className="block text-[#ff7b00]">STRENGTH</span>
+                  <span className="block">SIMULATOR</span>
+                </h2>
+
+                <div className="flex flex-col items-center gap-2 mb-16">
+                  <span className="bg-[#ff7b00] text-white px-6 py-2 font-black text-lg md:text-2xl uppercase italic shadow-[0_10px_30px_rgba(255,123,0,0.3)]">PUSH PAST ALL</span>
+                  <span className="bg-[#ff7b00] text-white px-6 py-2 font-black text-lg md:text-2xl uppercase italic shadow-[0_10px_30px_rgba(255,123,0,0.3)]">HUMAN LIMITS NOW</span>
+                  <span className="bg-[#ff7b00] text-white px-6 py-2 font-black text-lg md:text-2xl uppercase italic shadow-[0_10px_30px_rgba(255,123,0,0.3)]">JOIN THE GROUP</span>
                 </div>
-             </div>
-          </div>
+              </div>
+
+              <div className="relative z-10 flex flex-col sm:flex-row w-full max-w-2xl gap-6">
+                 <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#5865F2] text-white py-6 md:py-8 rounded-3xl font-black text-xl md:text-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(88,101,242,0.3)] italic uppercase tracking-widest border border-white/20">
+                    <MessageSquare size={28} />
+                    COMMUNITY
+                 </a>
+                 <a href={ROBLOX_LINK} target="_blank" rel="noopener noreferrer" className="flex-1 bg-black text-white py-6 md:py-8 rounded-3xl font-black text-xl md:text-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(0,0,0,0.3)] italic uppercase tracking-widest border border-white/10">
+                    <ExternalLink size={28} />
+                    PLAY HUB
+                 </a>
+              </div>
+           </div>
         </section>
       </main>
 
-      <footer className="py-40 px-4 text-center border-t border-black/5 reveal" style={{ transformStyle: 'preserve-3d' }}>
-        <div className="max-w-7xl mx-auto" style={{ transform: 'translateZ(20px)' }}>
-          <h2 className="font-bangers text-[10vw] md:text-[8rem] text-black/5 select-none mb-16 leading-none uppercase">MEGA STRENGTH SIMULATOR</h2>
-          <div className="flex justify-center flex-wrap gap-12 text-[#1d1d1f] font-black text-sm uppercase tracking-[0.4em] italic">
-             <a href="#" onClick={togglePrivacy} className="hover:text-[#ff7b00] transition-colors cursor-pointer">Privacy Policy</a>
-             <a href="mailto:fusionhub122@gmail.com" className="hover:text-[#ff7b00] transition-colors">Support</a>
+      <footer className="py-32 px-6 text-center reveal relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-bangers text-[20vw] md:text-[12rem] text-black/5 select-none mb-14 leading-none uppercase">MEGA STRENGTH</h2>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-20 text-[#1d1d1f] font-black text-xs md:text-sm uppercase tracking-[0.4em] italic">
+             <a href="#" onClick={(e) => { e.preventDefault(); setIsPrivacyModalOpen(true); }} className="hover:text-[#ff7b00] transition-colors border-b-2 border-transparent hover:border-[#ff7b00]">Privacy Protocol</a>
+             <a href="mailto:fusionhub122@gmail.com" className="hover:text-[#ff7b00] transition-colors border-b-2 border-transparent hover:border-[#ff7b00]">Direct Support</a>
           </div>
-          <p className="mt-20 text-[#86868b] text-xs font-black uppercase tracking-[0.6em]">© 2025 FUSIONHUB STUDIO</p>
+          <p className="mt-20 text-[#86868b] text-[10px] font-black uppercase tracking-[0.6em] opacity-40">© 2025 FUSIONHUB ARCHITECTURE</p>
         </div>
+        <div className="absolute bottom-0 left-0 w-full h-4 bg-[#5865F2] shadow-[0_-10px_30px_rgba(88,101,242,0.2)]"></div>
       </footer>
       
-      <SecretTrigger onClick={handleOpenAdmin} />
+      <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
       
-      <AdminLogin 
-        isOpen={isAdminModalOpen && !auth.isLoggedIn} 
-        onClose={handleCloseAdmin} 
-        onLogin={handleLogin} 
-      />
-
-      {isAdminModalOpen && auth.isLoggedIn && (
-        <AdminDashboard 
-          branding={branding} 
-          codes={codes} 
-          logs={logs} 
-          onRefresh={fetchData} 
-          onLogout={handleLogout} 
-          onClose={handleCloseAdmin}
-        />
+      {/* Admin Layer */}
+      {isAdminModalOpen && (
+        <div className="fixed inset-0 z-[200000]">
+          {!auth.isLoggedIn ? (
+            <AdminLogin 
+              isOpen={true} 
+              onClose={() => setIsAdminModalOpen(false)} 
+              onLogin={handleLogin} 
+            />
+          ) : (
+            <AdminDashboard 
+              branding={branding} 
+              codes={codes} 
+              logs={logs} 
+              onRefresh={fetchData} 
+              onLogout={handleLogout} 
+              onClose={() => setIsAdminModalOpen(false)}
+            />
+          )}
+        </div>
       )}
 
       <PrivacyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />

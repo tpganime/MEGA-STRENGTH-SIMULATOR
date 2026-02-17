@@ -8,92 +8,89 @@ interface HeroProps {
   onOpenAdmin: () => void;
 }
 
-const MetadataBadge: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
-  <div className="liquid-glass px-6 py-3 flex items-center gap-3 border-white/50 transition-all hover:scale-105">
-    <div className="text-[#1d1d1f]">{icon}</div>
+const StyledMetadataBadge: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
+  <div className="bg-white/80 backdrop-blur-md px-6 md:px-8 py-4 rounded-full flex items-center gap-4 border border-black/5 shadow-sm transition-all hover:scale-105 active:scale-95 group">
+    <div className="text-[#1d1d1f] shrink-0 opacity-80 group-hover:text-[#ff7b00] transition-colors">
+      {icon}
+    </div>
     <div className="flex flex-col items-start leading-none">
-      <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest mb-1">{label}</span>
-      <span className="text-xs font-black text-[#1d1d1f] uppercase italic">{value}</span>
+      <span className="text-[9px] md:text-[10px] font-black text-[#86868b] uppercase tracking-widest mb-1.5">{label}</span>
+      <span className="text-[13px] md:text-[15px] font-black text-[#1d1d1f] uppercase italic">{value}</span>
     </div>
   </div>
 );
 
 const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
   return (
-    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-12 overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
-      <div className="relative z-20 text-center px-4 w-full max-w-5xl" style={{ transformStyle: 'preserve-3d' }}>
-        <div className="mb-12 flex flex-col items-center gap-8" style={{ transform: 'translateZ(40px)' }}>
+    <section id="home" className="relative pt-48 pb-12 flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative z-20 text-center px-6 w-full max-w-7xl mx-auto">
+        <div className="mb-14 flex flex-col items-center gap-12">
             <button 
                 onClick={onOpenAdmin}
-                className="liquid-glass inline-flex items-center gap-3 px-8 py-3 group hover:scale-110 active:scale-95 cursor-pointer z-30 outline-none border-white/40 pointer-events-auto"
+                className="liquid-glass inline-flex items-center gap-4 px-8 py-3.5 group hover:scale-105 active:scale-95 cursor-pointer z-30 outline-none border-white/50 shadow-lg"
             >
                 <div className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </div>
-                <span className="text-[14px] font-black tracking-[0.4em] uppercase text-[#1d1d1f]/80 group-hover:text-black transition-colors">JOIN SIMULATION</span>
+                <span className="text-[11px] font-black tracking-[0.4em] uppercase text-[#1d1d1f]">SYNCED ONLINE</span>
             </button>
 
-            {/* Game Metadata Row */}
-            <div className="flex flex-wrap justify-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <MetadataBadge 
-                icon={<Info size={14} />} 
-                label="Genre" 
-                value="Simulation" 
+            {/* Exact Metadata Badges from Screenshot */}
+            <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+              <StyledMetadataBadge 
+                icon={<Info size={20} />} 
+                label="GENRE" 
+                value="SIMULATION" 
               />
-              <MetadataBadge 
-                icon={<Zap size={14} />} 
-                label="Subgenre" 
-                value="Physics Sim" 
+              <StyledMetadataBadge 
+                icon={<Zap size={20} />} 
+                label="SUBGENRE" 
+                value="PHYSICS SIM" 
               />
-              <MetadataBadge 
-                icon={<ShieldCheck size={14} />} 
-                label="Maturity" 
-                value="Minimal" 
+              <StyledMetadataBadge 
+                icon={<ShieldCheck size={20} />} 
+                label="MATURITY" 
+                value="MINIMAL" 
               />
             </div>
         </div>
         
-        <div className="mb-16" style={{ transform: 'translateZ(80px)' }}>
-            <h1 className="text-[clamp(3rem,15vw,9rem)] font-bangers tracking-tight leading-[0.85] uppercase select-none">
-                <span className="block text-[#1d1d1f]/10 text-[clamp(1rem,4vw,3rem)] tracking-[0.8em] font-black mb-6">FUSIONHUB</span>
-                <span className="block text-[#1d1d1f] drop-shadow-2xl">MEGA</span>
-                <span className="block text-[#ff7b00]" style={{ filter: 'drop-shadow(0 10px 30px rgba(255,123,0,0.4))' }}>STRENGTH</span>
-                <span className="block text-[#1d1d1f]/5 text-[clamp(1.5rem,6vw,5rem)] mt-4 tracking-[0.6em] font-black">SIMULATOR</span>
+        <div className="mb-14">
+            <h1 className="text-7xl md:text-[9rem] font-bangers tracking-tight leading-[0.85] uppercase select-none">
+                <span className="block text-[#1d1d1f]/10 text-xl md:text-2xl tracking-[0.6em] font-black mb-8 italic">FUSIONHUB</span>
+                <span className="block text-[#1d1d1f]">MEGA</span>
+                <span className="block text-[#ff7b00]">STRENGTH</span>
+                <span className="block text-[#1d1d1f]">SIMULATOR</span>
             </h1>
         </div>
 
-        <div className="flex justify-center mt-12 relative z-40" style={{ transform: 'translateZ(120px)' }}>
+        <div className="flex justify-center mb-20 relative z-40">
           <a 
             href={ROBLOX_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative liquid-glass !bg-[#1d1d1f] !border-transparent text-white font-black text-2xl md:text-4xl px-16 md:px-24 py-8 md:py-10 rounded-[40px] hover:scale-110 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] active:scale-95 transition-all shadow-[0_30px_60px_rgba(0,0,0,0.2)] uppercase italic flex items-center justify-center gap-6 cursor-pointer pointer-events-auto"
+            className="group relative bg-[#1d1d1f] text-white font-black text-2xl md:text-4xl px-16 py-8 md:px-20 md:py-10 rounded-[40px] hover:scale-105 transition-all shadow-[0_40px_80px_rgba(0,0,0,0.3)] hover:shadow-[0_50px_100px_rgba(0,0,0,0.4)] uppercase italic flex items-center justify-center gap-6 cursor-pointer border-4 border-white/10"
           >
-            <Play fill="white" size={32} className="md:w-10 md:h-10 transition-transform group-hover:scale-125" />
+            <Play fill="white" size={36} className="transition-transform group-hover:scale-125" />
             PLAY NOW
           </a>
         </div>
       </div>
 
-      <div className="mt-24 w-full max-w-6xl px-4 relative z-10" style={{ transform: 'rotateX(8deg) translateZ(-50px)', transformStyle: 'preserve-3d' }}>
-        <div 
-          className="relative liquid-glass overflow-hidden aspect-video shadow-3xl transition-all duration-1000 group hover:rotate-y-[2deg] hover:rotate-x-[2deg]"
-        >
+      <div className="w-full px-6 max-w-7xl mx-auto relative z-10">
+        <div className="relative liquid-glass overflow-hidden aspect-video shadow-[0_60px_120px_rgba(0,0,0,0.1)] rounded-[3rem] md:rounded-[4rem] border-white/60 group">
            <img 
             src={bannerUrl} 
             alt="Gameplay Preview" 
-            className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-2000"
+            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
            />
-           <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none"></div>
-           
-           {/* 4D Glow Overlay */}
-           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-tr from-[#ff7b00]/20 via-transparent to-[#3a86ff]/20"></div>
+           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
       </div>
       
-      <div className="w-full max-w-md mt-20 px-8 opacity-40" style={{ transform: 'translateZ(10px)' }}>
-        <div className="spectral-bar w-full"></div>
+      <div className="w-full max-w-[200px] mt-24 px-8 opacity-10">
+        <div className="spectral-bar w-full h-2"></div>
       </div>
     </section>
   );

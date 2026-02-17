@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { GameCode, UpdateLog, Branding } from '../types.ts';
 
@@ -94,6 +93,13 @@ export const storageService = {
     } catch { return false; }
   },
 
+  deleteCode: async (id: string) => {
+    try {
+      const { error } = await supabase.from('codes').delete().eq('id', id);
+      return !error;
+    } catch { return false; }
+  },
+
   getLogs: async (): Promise<UpdateLog[]> => {
     try {
       const { data, error } = await supabase
@@ -112,6 +118,13 @@ export const storageService = {
         content: log.content,
         date: new Date().toISOString().split('T')[0]
       }]);
+      return !error;
+    } catch { return false; }
+  },
+
+  deleteLog: async (id: string) => {
+    try {
+      const { error } = await supabase.from('logs').delete().eq('id', id);
       return !error;
     } catch { return false; }
   }
