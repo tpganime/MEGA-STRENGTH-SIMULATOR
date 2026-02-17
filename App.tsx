@@ -19,6 +19,7 @@ const DEFAULT_BRANDING: Branding = {
 };
 
 const ROBLOX_LINK = "https://www.roblox.com/share?code=8d55194d5873e5459eeedd0980b6a2ea&type=ExperienceDetails&stamp=1771278749535";
+const DISCORD_LINK = "https://discord.gg/rEQkkq2sNc";
 
 const App: React.FC = () => {
   const [codes, setCodes] = useState<GameCode[]>([]);
@@ -110,11 +111,11 @@ const App: React.FC = () => {
                   <p className="text-gray-400 text-lg md:text-xl font-medium">Get exclusive sneak peeks and chat with the devs in our official community hubs.</p>
                 </div>
                 <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-                   <a href="#" className="flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
+                   <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
                       <MessageSquare size={24} />
                       DISCORD
                    </a>
-                   <a href={ROBLOX_LINK} target="_blank" className="flex items-center gap-3 bg-zinc-800 hover:bg-zinc-700 px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
+                   <a href={ROBLOX_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-zinc-800 hover:bg-zinc-700 px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
                       <ExternalLink size={24} />
                       ROBLOX GROUP
                    </a>
@@ -128,7 +129,7 @@ const App: React.FC = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#FF8C00]/50 to-transparent"></div>
         <div className="max-w-7xl mx-auto">
           <h2 className="font-bangers text-4xl md:text-6xl opacity-10 select-none mb-8 tracking-[1em]">FUSION HUB</h2>
-          <p className="text-zinc-500 font-bold tracking-widest uppercase text-xs md:text-sm">© 2025 TITAN DIMENSION STUDIOS</p>
+          <p className="text-zinc-500 font-bold tracking-widest uppercase text-xs md:text-sm">© 2025 FUSIONHUB STUDIO</p>
           <div className="flex justify-center flex-wrap gap-6 md:gap-8 mt-12 text-zinc-600 font-black text-[10px] uppercase tracking-[0.4em]">
              <a href="#" className="hover:text-[#FF8C00] transition-colors">Privacy Policy</a>
              <a href="#" className="hover:text-[#00BFFF] transition-colors">Terms of Service</a>

@@ -3,6 +3,7 @@ import React from 'react';
 import { Dumbbell, Menu, X, Book, MessageCircle } from 'lucide-react';
 
 const ROBLOX_LINK = "https://www.roblox.com/share?code=8d55194d5873e5459eeedd0980b6a2ea&type=ExperienceDetails&stamp=1771278749535";
+const DISCORD_LINK = "https://discord.gg/rEQkkq2sNc";
 
 interface NavbarProps {
   logoUrl: string;
@@ -45,14 +46,14 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenAdmin }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center gap-3 group cursor-pointer" onClick={handleLogoClick}>
-            <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-900 border border-white/10 flex items-center justify-center transition-transform group-hover:scale-110">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl overflow-hidden bg-zinc-900 border border-white/10 flex items-center justify-center transition-transform group-hover:scale-110">
               {logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
               ) : (
-                <Dumbbell className="text-[#FF8C00] w-7 h-7" />
+                <Dumbbell className="text-[#FF8C00] w-6 h-6 md:w-7 md:h-7" />
               )}
             </div>
-            <span className="font-bangers text-3xl tracking-wider text-white uppercase hidden lg:block group-hover:text-[#FF8C00] transition-colors">MEGA STRENGTH</span>
+            <span className="font-bangers text-2xl md:text-3xl tracking-wider text-white uppercase hidden sm:block group-hover:text-[#FF8C00] transition-colors">MEGA STRENGTH</span>
           </div>
           
           <div className="hidden md:block">
@@ -71,14 +72,14 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenAdmin }) => {
               <a href="#" className="p-2 text-zinc-500 hover:text-[#00BFFF] transition-colors" title="Wiki">
                 <Book size={20} />
               </a>
-              <a href="#" className="p-2 text-zinc-500 hover:text-[#5865F2] transition-colors" title="Discord">
+              <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="p-2 text-zinc-500 hover:text-[#5865F2] transition-colors" title="Discord">
                 <MessageCircle size={22} />
               </a>
               <a 
                 href={ROBLOX_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#FF8C00] text-black font-black px-8 py-3 rounded-xl hover:scale-105 transition-transform inline-block shadow-[0_0_20px_rgba(255,140,0,0.3)] uppercase text-sm tracking-widest"
+                className="bg-[#FF8C00] text-black font-black px-6 py-2.5 rounded-xl hover:scale-105 transition-transform inline-block shadow-[0_0_20px_rgba(255,140,0,0.3)] uppercase text-xs md:text-sm tracking-widest"
               >
                 PLAY
               </a>
@@ -109,7 +110,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenAdmin }) => {
              <a href="#" className="flex-1 bg-zinc-900 py-4 rounded-xl flex items-center justify-center gap-2">
                 <Book size={18} /> WIKI
              </a>
-             <a href="#" className="flex-1 bg-zinc-900 py-4 rounded-xl flex items-center justify-center gap-2">
+             <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="flex-1 bg-zinc-900 py-4 rounded-xl flex items-center justify-center gap-2">
                 <MessageCircle size={18} /> DISCORD
              </a>
           </div>

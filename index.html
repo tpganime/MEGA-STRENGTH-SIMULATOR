@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Strength Simulator | Titan Dimension</title>
+    <title>Mega Strength Simulator | FusionHub Studio</title>
     <meta name="description" content="Official community portal for Mega Strength Simulator. Access codes and patch notes.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,72 +16,155 @@
             --neon-blue: #00BFFF;
             --mouse-x: 0.5;
             --mouse-y: 0.5;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
         }
         .font-bangers { font-family: 'Bangers', cursive; }
+        
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #000; 
+            background-color: #0a0a0a; 
             color: #ffffff;
             margin: 0;
             overflow-x: hidden;
             min-height: 100vh;
+            perspective: 2000px;
         }
+
+        /* Technical Grid Background */
+        .grid-background {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
         .temporal-warp {
             position: fixed;
             inset: -20%;
             background: 
                 radial-gradient(circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), rgba(255, 140, 0, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at calc(100% - (var(--mouse-x) * 100%)) calc(100% - (var(--mouse-y) * 100%)), rgba(0, 191, 255, 0.06) 0%, transparent 40%),
-                #050505;
+                radial-gradient(circle at calc(100% - (var(--mouse-x) * 100%)) calc(100% - (var(--mouse-y) * 100%)), rgba(0, 191, 255, 0.06) 0%, transparent 40%);
             z-index: -1;
-            filter: blur(80px);
+            filter: blur(100px);
+            animation: pulse-warp 15s ease-in-out infinite alternate;
         }
+
+        @keyframes pulse-warp {
+            from { transform: scale(1); opacity: 0.5; }
+            to { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        /* Advanced Liquid Glass Effect */
         .liquid-glass {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 40px -10px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 10px 20px -5px rgba(255, 255, 255, 0.05);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        /* Refractive Highlight Layer */
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
+            pointer-events: none;
+        }
+
+        .liquid-glass:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px) translateZ(20px);
+            box-shadow: 
+                0 20px 50px -15px rgba(0, 0, 0, 0.6),
+                inset 0 1px 2px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Interactive 3D Card */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card-3d:hover {
+            transform: rotateX(5deg) rotateY(-5deg);
+        }
+
+        .animate-titan-glow {
+            animation: titanGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes titanGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.2)); text-shadow: 0 0 10px rgba(255, 140, 0, 0.2); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 140, 0, 0.5)); text-shadow: 0 0 20px rgba(255, 140, 0, 0.4); }
+        }
+
+        .text-4d {
+            text-shadow: 0 0 10px rgba(255,140,0,0.1), 0 10px 20px rgba(0,0,0,0.3);
+            transform: translateZ(40px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px; 
+            backdrop-filter: blur(10px);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-orange); }
+
+        /* Loader */
         #initial-loader {
             position: fixed;
             inset: 0;
-            background: #000;
+            background: #0a0a0a;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 99999;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .spin { animation: spin 0.8s linear infinite; }
-        .animate-titan-glow {
-            animation: titanGlow 3s ease-in-out infinite;
-        }
-        @keyframes titanGlow {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.3)); }
-            50% { filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.6)); }
-        }
+        .spin { animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
     </style>
     <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@19.0.0",
-        "react/": "https://esm.sh/react@19.0.0/",
-        "react-dom": "https://esm.sh/react-dom@19.0.0",
-        "react-dom/": "https://esm.sh/react-dom@19.0.0/",
-        "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.460.0",
-        "@google/genai": "https://esm.sh/@google/genai@0.21.0",
-        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.46.1"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react/": "https://esm.sh/react@19.0.0/",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.46.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
 </head>
 <body>
     <div id="initial-loader">
-        <div class="w-16 h-16 border-4 border-[#FF8C00]/10 border-t-[#FF8C00] rounded-full spin"></div>
-        <p class="mt-6 font-bangers tracking-[0.5em] text-white text-xl uppercase animate-pulse">Syncing Titan Node</p>
+        <div class="relative">
+            <div class="w-16 h-16 border border-white/5 rounded-full"></div>
+            <div class="absolute inset-0 w-16 h-16 border-t-2 border-[#FF8C00] rounded-full spin"></div>
+        </div>
+        <p class="mt-8 font-bangers tracking-[0.6em] text-white text-xl uppercase animate-pulse">SYNCHRONIZING REALITY</p>
     </div>
+    <div class="grid-background"></div>
     <div class="temporal-warp"></div>
     <div id="root"></div>
     <script type="module" src="index.tsx"></script>
@@ -91,17 +174,6 @@
             const y = e.clientY / window.innerHeight;
             document.documentElement.style.setProperty('--mouse-x', x);
             document.documentElement.style.setProperty('--mouse-y', y);
-        });
-        // Fail-safe to remove loader if JS hangs
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('initial-loader');
-                if (loader) {
-                    loader.style.opacity = '0';
-                    loader.style.visibility = 'hidden';
-                    setTimeout(() => loader.remove(), 600);
-                }
-            }, 2500);
         });
     </script>
 </body>

@@ -2,50 +2,64 @@
 import React from 'react';
 import { Weight, Map, TrendingUp, Users } from 'lucide-react';
 
-const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; desc: string }> = ({ icon, title, desc }) => (
-  <div className="p-6 md:p-10 liquid-glass border border-white/5 rounded-[2rem] md:rounded-[3rem] card-3d group h-full">
-    <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 rounded-2xl md:rounded-3xl flex items-center justify-center mb-6 md:mb-8 group-hover:bg-[#00BFFF]/20 transition-all border border-white/10 group-hover:scale-110">
+const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; desc: string; index: number }> = ({ icon, title, desc, index }) => (
+  <div className="group liquid-glass p-8 md:p-14 border border-white/5 card-3d h-full min-h-[360px] flex flex-col items-center text-center">
+    <div className="absolute top-4 left-6 text-white/5 font-bangers text-4xl select-none group-hover:text-white/10 transition-colors">0{index + 1}</div>
+    
+    <div className="w-20 h-20 md:w-28 md:h-28 liquid-glass !bg-white/5 rounded-[2.5rem] flex items-center justify-center mb-10 group-hover:!bg-[#00BFFF]/10 transition-all shadow-xl group-hover:-translate-y-4" style={{ transform: 'translateZ(40px)' }}>
       {icon}
     </div>
-    <h3 className="text-2xl md:text-3xl font-black mb-3 md:mb-4 group-hover:text-[#00BFFF] transition-colors uppercase tracking-tighter italic">{title}</h3>
-    <p className="text-gray-400 text-base md:text-lg leading-relaxed font-medium">{desc}</p>
-    <div className="mt-6 md:mt-8 h-1 w-0 bg-gradient-to-r from-neon-orange to-neon-blue group-hover:w-full transition-all duration-700"></div>
+    <h3 className="text-3xl md:text-5xl font-black mb-6 group-hover:text-[#00BFFF] transition-colors uppercase tracking-tighter italic" style={{ transform: 'translateZ(60px)' }}>{title}</h3>
+    <p className="text-gray-400 text-lg md:text-xl leading-relaxed font-medium max-w-sm" style={{ transform: 'translateZ(30px)' }}>{desc}</p>
+    
+    <div className="mt-auto pt-10 w-full">
+        <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full w-0 group-hover:w-full bg-gradient-to-r from-transparent via-[#00BFFF] to-transparent transition-all duration-1000"></div>
+        </div>
+    </div>
   </div>
 );
 
 const Features: React.FC = () => {
   return (
-    <section id="features" className="py-16 md:py-32 px-4 bg-[#020202]">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 md:mb-24 gap-6 md:gap-8">
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-7xl font-bangers tracking-wider text-[#FF8C00] mb-4 md:mb-6 leading-none">UNSTOPPABLE <br className="hidden sm:block"/>CORE SPECS</h2>
-            <p className="text-gray-500 text-lg md:text-xl font-medium">Engineered for pure progression. Master the arts of the simulator dimension.</p>
-          </div>
-          <div className="h-px flex-1 bg-white/5 mx-12 hidden lg:block"></div>
-          <div className="text-zinc-800 font-bangers text-6xl md:text-9xl leading-none select-none opacity-20">01-04</div>
+    <section id="features" className="py-24 md:py-48 px-4 bg-[#0a0a0a] relative overflow-hidden">
+      {/* Decorative Blueprint Lines */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-24 md:mb-40">
+            <h2 className="text-5xl md:text-9xl font-bangers tracking-tight text-white mb-8 leading-[0.8] uppercase">
+              TITAN <span className="text-[#FF8C00] italic">CORE</span> SPECS
+            </h2>
+            <p className="text-gray-500 text-xl md:text-3xl font-medium max-w-2xl mx-auto tracking-tight">
+                Architecting the next generation of human performance simulation.
+            </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <FeatureCard 
-            icon={<Weight className="w-8 h-8 md:w-10 md:h-10 text-[#FF8C00]" />}
-            title="Titan Training"
-            desc="Wield massive dumbbells and set personal records on deadlifts to unlock god-tier muscles."
+            index={0}
+            icon={<Weight className="w-10 h-10 md:w-14 md:h-14 text-[#FF8C00]" />}
+            title="Max Loads"
+            desc="Shatter limits with precision weighted assets. Real-time physics engine integration."
           />
           <FeatureCard 
-            icon={<Map className="w-8 h-8 md:w-10 md:h-10 text-[#00BFFF]" />}
-            title="Vortex Zones"
-            desc="Unlock mystical regions from Neon City to Ancient Ruins, each providing 10x strength multipliers."
+            index={1}
+            icon={<Map className="w-10 h-10 md:w-14 md:h-14 text-[#00BFFF]" />}
+            title="Multi-D Warp"
+            desc="Explore 4D environments from neon hubs to cosmic peaks. 10x strength multipliers."
           />
           <FeatureCard 
-            icon={<TrendingUp className="w-8 h-8 md:w-10 md:h-10 text-[#FF8C00]" />}
-            title="Ultra Rewards"
-            desc="A progression loop so satisfying you'll watch your avatar evolve from a shrimp into a galactic titan."
+            index={2}
+            icon={<TrendingUp className="w-10 h-10 md:w-14 md:h-14 text-[#FF8C00]" />}
+            title="Apex Gains"
+            desc="Linear progression models tuned for consistent dopamine and power spikes."
           />
           <FeatureCard 
-            icon={<Users className="w-8 h-8 md:w-10 md:h-10 text-[#00BFFF]" />}
-            title="Global Apex"
-            desc="Compete in real-time on global leaderboards to prove you are the strongest entity in existence."
+            index={3}
+            icon={<Users className="w-10 h-10 md:w-14 md:h-14 text-[#00BFFF]" />}
+            title="Social Sync"
+            desc="Compete in global hierarchy wars. Real-time titan ranking across all dimensions."
           />
         </div>
       </div>
