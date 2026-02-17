@@ -13,7 +13,6 @@ const Navbar: React.FC<NavbarProps> = ({ logoUrl, onOpenAdmin }) => {
 
   const navLinks = [
     { name: 'HOME', href: '#home' },
-    { name: 'MECHANICS', href: '#features' },
     { name: 'CODES', href: '#codes' },
     { name: 'LOGS', href: '#updates' },
   ];

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
-import Features from './components/Features.tsx';
 import CodeSection from './components/CodeSection.tsx';
 import UpdateLog from './components/UpdateLog.tsx';
 import SecretTrigger from './components/SecretTrigger.tsx';
 import AdminLogin from './components/AdminLogin.tsx';
 import AdminDashboard from './components/AdminDashboard.tsx';
+import PrivacyModal from './components/PrivacyModal.tsx';
 import { MessageSquare, ExternalLink } from 'lucide-react';
 import { GameCode, UpdateLog as UpdateLogType, AuthState, Branding } from './types.ts';
 import { storageService } from './services/storageService.ts';
@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [logs, setLogs] = useState<UpdateLogType[]>([]);
   const [branding, setBranding] = useState<Branding>(DEFAULT_BRANDING);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [auth, setAuth] = useState<AuthState>({ isLoggedIn: false, email: null });
 
   const hideLoader = () => {
@@ -69,6 +70,27 @@ const App: React.FC = () => {
         localStorage.removeItem('mss_admin_auth');
       }
     }
+
+    // Scroll Animation Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { 
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px' // Start animation slightly before they are fully in view
+    });
+
+    const timer = setTimeout(() => {
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }, 100);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleLogin = async (email: string, pass: string): Promise<boolean> => {
@@ -79,7 +101,6 @@ const App: React.FC = () => {
       const session = { isLoggedIn: true, email };
       setAuth(session);
       localStorage.setItem('mss_admin_auth', JSON.stringify(session));
-      // Once logged in, show the dashboard
       setIsAdminModalOpen(true);
       return true;
     }
@@ -100,26 +121,35 @@ const App: React.FC = () => {
     setIsAdminModalOpen(false);
   };
 
+  const togglePrivacy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsPrivacyModalOpen(!isPrivacyModalOpen);
+  };
+
   return (
     <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white">
       <Navbar logoUrl={branding.logo_url} onOpenAdmin={handleOpenAdmin} />
       
       <main>
-        <Hero 
-          bannerUrl={branding.banner_url} 
-          onOpenAdmin={handleOpenAdmin} 
-        />
-
-        <Features />
+        <div className="reveal">
+          <Hero 
+            bannerUrl={branding.banner_url} 
+            onOpenAdmin={handleOpenAdmin} 
+          />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 py-40">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-            <CodeSection codes={codes} />
-            <UpdateLog logs={logs} />
+            <div className="reveal">
+              <CodeSection codes={codes} />
+            </div>
+            <div className="reveal" style={{ transitionDelay: '0.2s' }}>
+              <UpdateLog logs={logs} />
+            </div>
           </div>
         </div>
 
-        <section className="py-40 bg-white/30 backdrop-blur-md">
+        <section className="py-40 bg-white/30 backdrop-blur-md reveal">
           <div className="max-w-7xl mx-auto px-4">
              <div className="liquid-glass p-16 md:p-24 rounded-[4rem] flex flex-col items-center text-center shadow-3xl">
                 <div className="max-w-3xl">
@@ -143,15 +173,14 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      <footer className="py-40 px-4 text-center border-t border-black/5">
+      <footer className="py-40 px-4 text-center border-t border-black/5 reveal">
         <div className="max-w-7xl mx-auto">
           <h2 className="font-bangers text-[10vw] md:text-[8rem] text-black/5 select-none mb-16 leading-none uppercase">MEGA STRENGTH SIMULATOR</h2>
           <div className="flex justify-center flex-wrap gap-12 text-[#1d1d1f] font-black text-sm uppercase tracking-[0.4em] italic">
-             <a href="#" className="hover:text-[#ff7b00] transition-colors">Privacy Policy</a>
-             <a href="#" className="hover:text-[#ff7b00] transition-colors">Terms of Service</a>
-             <a href="#" className="hover:text-[#ff7b00] transition-colors">Support</a>
+             <a href="#" onClick={togglePrivacy} className="hover:text-[#ff7b00] transition-colors">Privacy Policy</a>
+             <a href="mailto:fusionhub122@gmail.com" className="hover:text-[#ff7b00] transition-colors">Support</a>
           </div>
-          <p className="mt-20 text-[#86868b] text-xs font-black uppercase tracking-[0.6em]">© 2025 FUSIONHUB STUDIO DATA SYSTEMS</p>
+          <p className="mt-20 text-[#86868b] text-xs font-black uppercase tracking-[0.6em]">© 2025 FUSIONHUB STUDIO</p>
         </div>
       </footer>
       
@@ -173,6 +202,8 @@ const App: React.FC = () => {
           onClose={handleCloseAdmin}
         />
       )}
+
+      <PrivacyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
     </div>
   );
 };

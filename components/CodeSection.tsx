@@ -23,9 +23,9 @@ const CodeSection: React.FC<Props> = ({ codes }) => {
           <div className="w-12 h-12 liquid-glass flex items-center justify-center">
             <Hash className="w-6 h-6 text-[#ff7b00]" />
           </div>
-          <h2 className="text-5xl font-black tracking-tight text-[#1d1d1f] uppercase italic">IN GAME REWARD CODE</h2>
+          <h2 className="text-5xl font-black tracking-tight text-[#1d1d1f] uppercase italic">IN GAME REWARD CODES</h2>
       </div>
-      
+
       <div className="space-y-8">
         {activeCodes.length > 0 ? activeCodes.map((item) => (
           <div 

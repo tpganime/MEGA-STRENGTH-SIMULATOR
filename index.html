@@ -13,9 +13,12 @@
         :root {
             --apple-black: #1d1d1f;
             --apple-gray: #86868b;
-            --apple-bg: #f2f2f7;
-            --glass-bg: rgba(255, 255, 255, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.8);
+            --apple-bg: #f8f8fb;
+            --brand-orange: #ff7b00;
+            --brand-blue: #3a86ff;
+            --brand-purple: #8338ec;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.7);
             --mouse-x: 0.5;
             --mouse-y: 0.5;
         }
@@ -32,13 +35,53 @@
 
         .font-bangers { font-family: 'Bangers', cursive; }
 
+        /* Persistent Aurora Background for PC & Mobile */
+        .bg-system {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            overflow: hidden;
+            background: #ffffff;
+            transform: translateZ(0); 
+        }
+
+        .aurora-blob {
+            position: absolute;
+            width: 100vw;
+            height: 100vw;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.22; /* Increased opacity slightly for better mobile visibility */
+            pointer-events: none;
+            animation: drift 25s infinite alternate ease-in-out;
+            will-change: transform;
+        }
+
+        @media (min-width: 768px) {
+            .aurora-blob {
+                width: 80vw;
+                height: 80vw;
+                filter: blur(120px);
+                opacity: 0.15;
+            }
+        }
+
+        .blob-1 { background: var(--brand-orange); top: -20%; left: -20%; animation-delay: 0s; }
+        .blob-2 { background: var(--brand-blue); bottom: -20%; right: -20%; animation-delay: -5s; }
+        .blob-3 { background: var(--brand-purple); top: 30%; left: 20%; width: 70vw; height: 70vw; animation-delay: -10s; }
+
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(15%, 15%) scale(1.1); }
+        }
+
         .grid-background {
             position: fixed;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
             background-position: center;
             z-index: -2;
             pointer-events: none;
@@ -46,28 +89,40 @@
 
         .temporal-warp {
             position: fixed;
-            inset: -20%;
+            inset: 0;
             background: radial-gradient(
-                circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), 
-                rgba(255, 255, 255, 0.8) 0%, 
-                transparent 50%
+                600px circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), 
+                rgba(255, 123, 0, 0.12) 0%, 
+                rgba(58, 134, 255, 0.08) 40%,
+                transparent 80%
             );
             z-index: -1;
-            filter: blur(100px);
-            opacity: 0.3;
-            mix-blend-mode: soft-light;
+            filter: blur(40px);
             pointer-events: none;
+        }
+
+        /* Scroll Reveal Utility Classes */
+        .reveal {
+          opacity: 0;
+          transform: translateY(40px);
+          transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform;
+        }
+
+        .reveal.active {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .liquid-glass {
             background: var(--glass-bg);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
             border: 1px solid var(--glass-border);
             border-radius: 32px;
             box-shadow: 
-                0 10px 30px -10px rgba(0, 0, 0, 0.08),
-                inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+                0 10px 30px -10px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
@@ -75,6 +130,7 @@
         .liquid-glass:hover {
             border-color: rgba(255, 255, 255, 1);
             transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
         }
 
         .card-3d { transform-style: preserve-3d; }
@@ -98,6 +154,8 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spin { animation: spin 0.8s linear infinite; }
+        
+        html { scroll-behavior: smooth; }
     </style>
     <script type="importmap">
 {
@@ -123,9 +181,18 @@
             <div class="absolute inset-0 border-t-2 border-[#1d1d1f] rounded-full spin"></div>
         </div>
     </div>
+    
+    <div class="bg-system">
+        <div class="aurora-blob blob-1"></div>
+        <div class="aurora-blob blob-2"></div>
+        <div class="aurora-blob blob-3"></div>
+    </div>
+    
     <div class="grid-background"></div>
     <div class="temporal-warp"></div>
+    
     <div id="root"></div>
+    
     <script type="module" src="index.tsx"></script>
     <script>
         document.addEventListener('mousemove', (e) => {
