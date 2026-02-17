@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Clock, ChevronRight } from 'lucide-react';
-import { UpdateLog as UpdateLogType } from '../types';
+import { UpdateLog as UpdateLogType } from '../types.ts';
 
 interface Props {
   logs: UpdateLogType[];
@@ -30,10 +30,6 @@ const UpdateLog: React.FC<Props> = ({ logs }) => {
                 <div className="text-gray-400 leading-relaxed whitespace-pre-line">
                   {log.content}
                 </div>
-                
-                <button className="mt-6 flex items-center gap-1 text-[#00BFFF] font-bold hover:underline">
-                  Full Dev Log <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           ))}

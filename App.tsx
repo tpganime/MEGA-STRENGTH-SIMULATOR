@@ -1,16 +1,16 @@
 
-import React from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import CodeSection from './components/CodeSection';
-import UpdateLog from './components/UpdateLog';
-import SecretTrigger from './components/SecretTrigger';
-import AdminLogin from './components/AdminLogin';
-import AdminDashboard from './components/AdminDashboard';
-import { GameCode, UpdateLog as UpdateLogType, AuthState, Branding } from './types';
-import { storageService } from './services/storageService';
-import { MousePointer2, Dumbbell, Globe, Anchor } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import Navbar from './components/Navbar.tsx';
+import Hero from './components/Hero.tsx';
+import Features from './components/Features.tsx';
+import CodeSection from './components/CodeSection.tsx';
+import UpdateLog from './components/UpdateLog.tsx';
+import SecretTrigger from './components/SecretTrigger.tsx';
+import AdminLogin from './components/AdminLogin.tsx';
+import AdminDashboard from './components/AdminDashboard.tsx';
+import { Github, MessageSquare, ExternalLink } from 'lucide-react';
+import { GameCode, UpdateLog as UpdateLogType, AuthState, Branding } from './types.ts';
+import { storageService } from './services/storageService.ts';
 
 const DEFAULT_BRANDING: Branding = {
   logo_url: 'https://r2.erweima.ai/i/qL7N00zRRaS0kQh_pG_W7A.png',
@@ -18,56 +18,53 @@ const DEFAULT_BRANDING: Branding = {
   gameplay_images: ['https://r2.erweima.ai/i/0p9NfS4RR6aP4q0H-F7ZzA.png']
 };
 
+const ROBLOX_LINK = "https://www.roblox.com/share?code=8d55194d5873e5459eeedd0980b6a2ea&type=ExperienceDetails&stamp=1771278749535";
+
 const App: React.FC = () => {
-  const [codes, setCodes] = React.useState<GameCode[]>([]);
-  const [logs, setLogs] = React.useState<UpdateLogType[]>([]);
-  const [branding, setBranding] = React.useState<Branding>(DEFAULT_BRANDING);
-  const [isAdminModalOpen, setIsAdminModalOpen] = React.useState(false);
-  const [auth, setAuth] = React.useState<AuthState>({ isLoggedIn: false, email: null });
-  
-  // Slideshow state
-  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [codes, setCodes] = useState<GameCode[]>([]);
+  const [logs, setLogs] = useState<UpdateLogType[]>([]);
+  const [branding, setBranding] = useState<Branding>(DEFAULT_BRANDING);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [auth, setAuth] = useState<AuthState>({ isLoggedIn: false, email: null });
+
+  const hideLoader = () => {
+    const loader = document.getElementById('initial-loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      loader.style.visibility = 'hidden';
+      setTimeout(() => loader.remove(), 600);
+    }
+  };
 
   const fetchData = async () => {
     try {
-      const [fetchedCodes, fetchedLogs, fetchedBranding] = await Promise.all([
+      const [c, l, b] = await Promise.all([
         storageService.getCodes(),
         storageService.getLogs(),
         storageService.getBranding()
       ]);
       
-      setCodes(fetchedCodes || []);
-      setLogs(fetchedLogs || []);
-      if (fetchedBranding) {
-        setBranding({
-          logo_url: fetchedBranding.logo_url || DEFAULT_BRANDING.logo_url,
-          banner_url: fetchedBranding.banner_url || DEFAULT_BRANDING.banner_url,
-          gameplay_images: fetchedBranding.gameplay_images?.length ? fetchedBranding.gameplay_images : DEFAULT_BRANDING.gameplay_images
-        });
-      }
+      setCodes(c || []);
+      setLogs(l || []);
+      if (b) setBranding(b);
     } catch (err) {
-      console.error('Error in fetchData:', err);
+      console.warn('Data fetch issue:', err);
+    } finally {
+      hideLoader();
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
     const storedAuth = localStorage.getItem('mss_admin_auth');
     if (storedAuth) {
-      setAuth(JSON.parse(storedAuth));
+      try {
+        setAuth(JSON.parse(storedAuth));
+      } catch (e) {
+        localStorage.removeItem('mss_admin_auth');
+      }
     }
   }, []);
-
-  // Auto-slideshow effect
-  React.useEffect(() => {
-    if (branding.gameplay_images.length <= 1) return;
-    
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % branding.gameplay_images.length);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [branding.gameplay_images]);
 
   const handleLogin = async (email: string, pass: string): Promise<boolean> => {
     const ADMIN_EMAIL = 'fusionhub122@gmail.com';
@@ -88,127 +85,72 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-neon-orange selection:text-black scroll-smooth">
-      <Navbar logoUrl={branding.logo_url} />
+    <div className="min-h-screen bg-black text-white selection:bg-[#FF8C00] selection:text-black">
+      <Navbar logoUrl={branding.logo_url} onOpenAdmin={() => setIsAdminModalOpen(true)} />
       
       <main>
         <Hero 
           bannerUrl={branding.banner_url} 
           onOpenAdmin={() => setIsAdminModalOpen(true)} 
         />
-        
-        {/* How to Play Section - Multi-image Slideshow */}
-        <section className="py-24 px-4 bg-gradient-to-b from-black via-[#080808] to-black">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-7xl font-bangers tracking-widest text-white uppercase">THE GRIND <span className="neon-orange">NEVER STOPS</span></h2>
-              <div className="w-32 h-2 bg-neon-orange mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row items-center gap-16 bg-zinc-900/40 border border-white/5 rounded-[4rem] p-8 lg:p-20 shadow-3xl">
-              <div className="flex-1 space-y-10 order-2 lg:order-1">
-                <div className="space-y-12">
-                  <div className="flex items-start gap-6 group">
-                    <div className="w-16 h-16 rounded-2xl bg-neon-orange/20 flex items-center justify-center shrink-0 border border-neon-orange/30 group-hover:scale-110 transition-transform">
-                      <MousePointer2 className="w-8 h-8 text-neon-orange" />
-                    </div>
-                    <div>
-                      <h4 className="text-2xl font-black mb-2 text-white uppercase italic tracking-wider">1. Train to Gain</h4>
-                      <p className="text-gray-400 text-lg leading-relaxed">Every click increases your strength. Start with light weights and push your limits to become the ultimate powerhouse.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-6 group">
-                    <div className="w-16 h-16 rounded-2xl bg-[#00BFFF]/20 flex items-center justify-center shrink-0 border border-[#00BFFF]/30 group-hover:scale-110 transition-transform">
-                      <Anchor className="w-8 h-8 text-[#00BFFF]" />
-                    </div>
-                    <div>
-                      <h4 className="text-2xl font-black mb-2 text-white uppercase italic tracking-wider">2. Drag Massive Objects</h4>
-                      <p className="text-gray-400 text-lg leading-relaxed">Harness your power to drag heavy objects like safes and tires across the gym. This is the fastest way to gain massive XP.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-1 relative group order-1 lg:order-2 w-full">
-                <div className="absolute -inset-4 bg-gradient-to-r from-neon-orange to-neon-blue rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                <div className="relative z-10 rounded-[3rem] overflow-hidden border-4 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] aspect-video">
-                  {branding.gameplay_images.map((img, idx) => (
-                    <div 
-                      key={idx}
-                      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                    >
-                      <img 
-                        src={img} 
-                        alt={`Gameplay ${idx + 1}`} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                  <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-end">
-                     <span className="bg-neon-orange text-black font-black px-4 py-1 rounded text-sm uppercase">GAMEPLAY SHOWCASE</span>
-                     <div className="flex gap-2">
-                       {branding.gameplay_images.map((_, idx) => (
-                         <div 
-                           key={idx} 
-                           className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? 'w-8 bg-neon-orange' : 'w-2 bg-white/30'}`}
-                         />
-                       ))}
-                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <Features />
-        <CodeSection codes={codes} />
-        <UpdateLog logs={logs} />
+
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 py-12 md:py-24">
+          <CodeSection codes={codes} />
+          <UpdateLog logs={logs} />
+        </div>
+
+        {/* Community & Socials */}
+        <section className="py-16 md:py-24 bg-zinc-950">
+          <div className="max-w-7xl mx-auto px-4">
+             <div className="liquid-glass p-8 md:p-16 rounded-[2rem] md:rounded-[4rem] flex flex-col lg:flex-row items-center justify-between gap-12">
+                <div className="max-w-xl text-center lg:text-left">
+                  <h2 className="text-4xl md:text-6xl font-bangers tracking-wider text-white mb-6 uppercase">JOIN THE <span className="text-[#FF8C00]">TITAN</span> SQUAD</h2>
+                  <p className="text-gray-400 text-lg md:text-xl font-medium">Get exclusive sneak peeks and chat with the devs in our official community hubs.</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+                   <a href="#" className="flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
+                      <MessageSquare size={24} />
+                      DISCORD
+                   </a>
+                   <a href={ROBLOX_LINK} target="_blank" className="flex items-center gap-3 bg-zinc-800 hover:bg-zinc-700 px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
+                      <ExternalLink size={24} />
+                      ROBLOX GROUP
+                   </a>
+                </div>
+             </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="bg-black py-16 px-4 border-t border-white/5">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
-          <div className="flex flex-col items-center md:items-start gap-4">
-            <div className="flex items-center gap-2">
-               {branding.logo_url && (
-                 <img src={branding.logo_url} alt="Logo" className="w-12 h-12 object-contain" />
-               )}
-               <span className="font-bangers text-4xl neon-orange tracking-widest uppercase">FUSIONHUB STUDIO</span>
-            </div>
-            <p className="text-gray-500 text-center md:text-left max-w-sm">
-              Home of MEGA STRENGTH SIMULATOR. Join the elite group of strongest legends in the Roblox metaverse.
-            </p>
+      <footer className="py-16 md:py-20 px-4 border-t border-white/5 bg-black text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#FF8C00]/50 to-transparent"></div>
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-bangers text-4xl md:text-6xl opacity-10 select-none mb-8 tracking-[1em]">FUSION HUB</h2>
+          <p className="text-zinc-500 font-bold tracking-widest uppercase text-xs md:text-sm">© 2025 TITAN DIMENSION STUDIOS</p>
+          <div className="flex justify-center flex-wrap gap-6 md:gap-8 mt-12 text-zinc-600 font-black text-[10px] uppercase tracking-[0.4em]">
+             <a href="#" className="hover:text-[#FF8C00] transition-colors">Privacy Policy</a>
+             <a href="#" className="hover:text-[#00BFFF] transition-colors">Terms of Service</a>
+             <a href="#" className="hover:text-white transition-colors">Support</a>
+             <button 
+                onClick={() => setIsAdminModalOpen(true)}
+                className="hover:text-red-500 transition-colors uppercase tracking-[0.4em]"
+             >
+                Admin Access
+             </button>
           </div>
-          
-          <div className="grid grid-cols-2 gap-16">
-            <div className="space-y-4 text-center md:text-left">
-              <h4 className="text-white font-bold uppercase tracking-widest text-sm">Quick Links</h4>
-              <ul className="space-y-2 text-gray-500">
-                <li><a href="#home" className="hover:text-neon-orange transition-colors">Home</a></li>
-                <li><a href="#features" className="hover:text-neon-orange transition-colors">Features</a></li>
-                <li><a href="#codes" className="hover:text-neon-orange transition-colors">Codes</a></li>
-                <li><a href="#updates" className="hover:text-neon-orange transition-colors">Updates</a></li>
-              </ul>
-            </div>
-            <div className="space-y-4 text-center md:text-left">
-              <h4 className="text-white font-bold uppercase tracking-widest text-sm">Community</h4>
-              <ul className="space-y-2 text-gray-500">
-                <li><a href="https://discord.gg/rEQkkq2sNc" target="_blank" rel="noopener noreferrer" className="hover:text-[#00BFFF] transition-colors">Discord Server</a></li>
-                <li><span className="text-gray-600 block">Roblox Group</span><span className="text-[10px] text-neon-orange uppercase font-bold tracking-tighter">(Coming Soon)</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 text-center text-gray-600 text-xs">
-           © {new Date().getFullYear()} FUSIONHUB STUDIO. Roblox is a trademark of Roblox Corporation.
         </div>
       </footer>
+      
+      <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
+      
+      <AdminLogin 
+        isOpen={isAdminModalOpen} 
+        onClose={() => setIsAdminModalOpen(false)} 
+        onLogin={handleLogin} 
+      />
 
-      {!auth.isLoggedIn && (
-        <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
-      )}
-      <AdminLogin isOpen={isAdminModalOpen} onClose={() => setIsAdminModalOpen(false)} onLogin={handleLogin} />
       {auth.isLoggedIn && (
         <AdminDashboard 
           branding={branding} 

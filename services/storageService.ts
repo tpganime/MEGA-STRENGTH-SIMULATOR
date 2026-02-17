@@ -1,6 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
-import { GameCode, UpdateLog, Branding } from '../types';
+import { GameCode, UpdateLog, Branding } from '../types.ts';
 
 const SUPABASE_URL = 'https://nlphefeazlkmasmlonih.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MAEYL8xx_hi_zio4Bboyww_BUJjeS2D';
@@ -16,10 +16,7 @@ export const storageService = {
   getBranding: async (): Promise<Branding | null> => {
     try {
       const { data, error } = await supabase.from('branding').select('*').eq('id', 1).maybeSingle();
-      if (error) {
-        console.error('Branding fetch error:', error.message);
-        return null;
-      }
+      if (error) return null;
       if (!data) return null;
       
       return {
@@ -27,8 +24,7 @@ export const storageService = {
         banner_url: data.banner_url,
         gameplay_images: Array.isArray(data.gameplay_images) ? data.gameplay_images : (data.gameplay_image_url ? [data.gameplay_image_url] : [])
       };
-    } catch (e) {
-      console.error('Unexpected error fetching branding:', e);
+    } catch {
       return null;
     }
   },
@@ -40,17 +36,10 @@ export const storageService = {
         logo_url: branding.logo_url,
         banner_url: branding.banner_url,
         gameplay_images: branding.gameplay_images,
-        // Keep the old field for backwards compatibility if needed
         gameplay_image_url: branding.gameplay_images[0] || ''
       }, { onConflict: 'id' });
-      
-      if (error) {
-        console.error('Supabase Save Error:', error.message);
-        return false;
-      }
-      return true;
-    } catch (e) {
-      console.error('Error saving branding:', e);
+      return !error;
+    } catch {
       return false;
     }
   },
@@ -58,30 +47,20 @@ export const storageService = {
   uploadFile: async (file: File, prefix: string): Promise<UploadResult> => {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`;
-      const filePath = fileName;
+      const fileName = `${prefix}-${Date.now()}.${fileExt}`;
 
-      const { data, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('game-assets')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true,
-          contentType: file.type
-        });
+        .upload(fileName, file, { contentType: file.type });
 
-      if (uploadError) {
-        return { 
-          url: null, 
-          error: uploadError.message.includes('not found') ? 'BUCKET_NOT_FOUND' : uploadError.message 
-        };
-      }
+      if (uploadError) return { url: null, error: uploadError.message };
 
       const { data: urlData } = supabase.storage
         .from('game-assets')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       return { url: urlData.publicUrl };
-    } catch (e) {
+    } catch {
       return { url: null, error: 'UNKNOWN_ERROR' };
     }
   },
@@ -92,7 +71,6 @@ export const storageService = {
         .from('codes')
         .select('*')
         .order('created_at', { ascending: false });
-      
       if (error) return [];
       return data.map((item: any) => ({
         id: item.id,
@@ -116,13 +94,6 @@ export const storageService = {
     } catch { return false; }
   },
 
-  deleteCode: async (id: string) => {
-    try {
-      const { error } = await supabase.from('codes').delete().eq('id', id);
-      return !error;
-    } catch { return false; }
-  },
-
   getLogs: async (): Promise<UpdateLog[]> => {
     try {
       const { data, error } = await supabase
@@ -141,13 +112,6 @@ export const storageService = {
         content: log.content,
         date: new Date().toISOString().split('T')[0]
       }]);
-      return !error;
-    } catch { return false; }
-  },
-
-  deleteLog: async (id: string) => {
-    try {
-      const { error } = await supabase.from('logs').delete().eq('id', id);
       return !error;
     } catch { return false; }
   }

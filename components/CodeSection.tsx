@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Copy, Check, Gift } from 'lucide-react';
-import { GameCode } from '../types';
+import { GameCode } from '../types.ts';
 
 interface Props {
   codes: GameCode[];
@@ -77,10 +77,6 @@ const CodeSection: React.FC<Props> = ({ codes }) => {
             <div className="text-center py-12 text-gray-500 italic">No active codes available. Check back soon!</div>
           )}
         </div>
-        
-        <p className="mt-8 text-center text-gray-500 text-sm">
-          How to redeem: Open game &rarr; Click 'Codes' icon &rarr; Type code &rarr; Click Redeem
-        </p>
       </div>
     </section>
   );
