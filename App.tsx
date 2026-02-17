@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
@@ -8,7 +7,7 @@ import UpdateLog from './components/UpdateLog.tsx';
 import SecretTrigger from './components/SecretTrigger.tsx';
 import AdminLogin from './components/AdminLogin.tsx';
 import AdminDashboard from './components/AdminDashboard.tsx';
-import { Github, MessageSquare, ExternalLink } from 'lucide-react';
+import { MessageSquare, ExternalLink } from 'lucide-react';
 import { GameCode, UpdateLog as UpdateLogType, AuthState, Branding } from './types.ts';
 import { storageService } from './services/storageService.ts';
 
@@ -102,12 +101,12 @@ const App: React.FC = () => {
           <UpdateLog logs={logs} />
         </div>
 
-        {/* Community & Socials */}
+        {/* Community & Socials - Renamed to Game Name */}
         <section className="py-16 md:py-24 bg-zinc-950">
           <div className="max-w-7xl mx-auto px-4">
              <div className="liquid-glass p-8 md:p-16 rounded-[2rem] md:rounded-[4rem] flex flex-col lg:flex-row items-center justify-between gap-12">
                 <div className="max-w-xl text-center lg:text-left">
-                  <h2 className="text-4xl md:text-6xl font-bangers tracking-wider text-white mb-6 uppercase">JOIN THE <span className="text-[#FF8C00]">TITAN</span> SQUAD</h2>
+                  <h2 className="text-4xl md:text-6xl font-bangers tracking-wider text-white mb-6 uppercase">JOIN THE <span className="text-[#FF8C00]">MEGA STRENGTH</span> SIMULATOR</h2>
                   <p className="text-gray-400 text-lg md:text-xl font-medium">Get exclusive sneak peeks and chat with the devs in our official community hubs.</p>
                 </div>
                 <div className="flex flex-wrap justify-center gap-4 md:gap-6">
