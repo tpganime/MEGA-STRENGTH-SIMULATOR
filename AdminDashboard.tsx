@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, LogOut, Save, Code, FileText, Image as ImageIcon, 
@@ -32,7 +33,7 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
   const showStatus = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
     setStatus({ message: msg, type });
-    setTimeout(() => setStatus({ message: '', type: 'info' }), 4000);
+    setTimeout(() => setStatus({ message: '', type: 'info' }), 5000);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'banner' | 'gameplay') => {
@@ -52,8 +53,10 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
           setEditBranding(prev => ({ ...prev, [field]: result.url }));
         }
         showStatus(`${type.toUpperCase()} Synchronized!`, 'success');
+      } else {
+        showStatus(`Upload failed: ${result.error || 'Unknown error'}`, 'error');
       }
-    } catch {
+    } catch (err) {
       showStatus('Transmission failed.', 'error');
     } finally {
       setIsProcessing(false);
@@ -62,23 +65,37 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
   const handleSaveBranding = async () => {
     setIsProcessing(true);
-    const success = await storageService.saveBranding(editBranding);
-    setIsProcessing(false);
-    if (success) {
-      showStatus('Global branding updated!', 'success');
-      onRefresh();
+    showStatus('Saving configuration...', 'info');
+    try {
+      const success = await storageService.saveBranding(editBranding);
+      if (success) {
+        showStatus('Global branding updated!', 'success');
+        onRefresh();
+      } else {
+        showStatus('Commit failed. Check console for details.', 'error');
+      }
+    } catch (err) {
+      showStatus('Critical save error.', 'error');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleAddCode = async () => {
     if (!newCode.code || !newCode.reward) return;
     setIsProcessing(true);
-    if (await storageService.saveCode({ ...newCode, code: newCode.code.toUpperCase() })) {
-      setNewCode({ code: '', reward: '' });
-      onRefresh();
-      showStatus('Reward code live!', 'success');
+    try {
+      const success = await storageService.saveCode({ ...newCode, code: newCode.code.toUpperCase() });
+      if (success) {
+        setNewCode({ code: '', reward: '' });
+        onRefresh();
+        showStatus('Reward code live!', 'success');
+      } else {
+        showStatus('Failed to add code.', 'error');
+      }
+    } finally {
+      setIsProcessing(false);
     }
-    setIsProcessing(false);
   };
 
   const handleDeleteCode = async (id: string) => {
@@ -120,7 +137,6 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
   return (
     <div className="fixed inset-0 z-[110000] bg-[#f8f8fb] flex overflow-hidden font-sans text-[#1d1d1f]">
-      {/* Sidebar navigation */}
       <aside className="w-80 h-full bg-white border-r border-black/5 flex flex-col p-8 z-50">
         <div className="flex items-center gap-4 mb-16">
           <div className="w-14 h-14 bg-black rounded-3xl flex items-center justify-center text-white shadow-2xl">
@@ -151,7 +167,6 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
         </div>
       </aside>
 
-      {/* Main content area */}
       <main className="flex-1 h-full overflow-y-auto relative bg-[#f8f8fb]">
         <header className="sticky top-0 z-40 bg-white/60 backdrop-blur-2xl px-12 py-8 flex items-center justify-between border-b border-black/5">
           <div className="flex items-center gap-4">
@@ -161,8 +176,8 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
           <div className="flex items-center gap-6">
             {status.message && (
-              <div className={`text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3 rounded-full shadow-2xl animate-pulse ${
-                status.type === 'error' ? 'bg-red-500 text-white' : 
+              <div className={`text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3 rounded-full shadow-2xl ${
+                status.type === 'error' ? 'bg-red-500 text-white animate-bounce' : 
                 status.type === 'success' ? 'bg-[#34C759] text-white' : 'bg-[#1d1d1f] text-white'
               }`}>
                 {status.message}
@@ -190,7 +205,7 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
                   className="bg-[#ff7b00] text-white px-16 py-6 rounded-3xl font-black italic uppercase tracking-[0.2em] shadow-[0_30px_60px_rgba(255,123,0,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center gap-4 disabled:opacity-50"
                 >
                   <Save size={24} />
-                  COMMIT CHANGES
+                  {isProcessing ? 'COMMITING...' : 'COMMIT CHANGES'}
                 </button>
               </div>
 
@@ -228,7 +243,6 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
                 <div className="bg-white rounded-[48px] p-10 space-y-10 shadow-sm border border-black/5">
                   <div className="flex items-center justify-between">
                      <label className="text-[12px] font-black uppercase tracking-widest text-[#86868b]">Showcase Gallery ({editBranding.gameplay_images.length})</label>
-                     <button className="text-[#3a86ff] font-black text-xs uppercase underline">Clear All</button>
                   </div>
                   <div className="grid grid-cols-2 gap-8">
                     {editBranding.gameplay_images.map((img, idx) => (
@@ -378,12 +392,6 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
                      <h3 className="text-[12px] font-black uppercase tracking-widest text-[#86868b]">CORE VERSION</h3>
                      <div className="text-5xl font-black italic uppercase tracking-tighter text-[#1d1d1f]">v4.2.1</div>
                   </div>
-               </div>
-               
-               <div className="bg-black p-24 rounded-[64px] text-center text-white space-y-8">
-                  <Activity size={80} className="mx-auto text-[#ff7b00] animate-pulse" />
-                  <h3 className="text-4xl font-black italic uppercase tracking-tighter">ANALYTICS ENGINE</h3>
-                  <p className="text-[#86868b] text-xl font-bold max-w-xl mx-auto uppercase tracking-widest">Deep shard distribution and player telemetry calculations are in progress. Advanced data visualization coming in next cycle.</p>
                </div>
             </div>
           )}

@@ -1,3 +1,4 @@
+
 {
   "name": "mega-strength-simulator-hub",
   "version": "1.0.0",
@@ -7,12 +8,16 @@
     "react-dom": "19.0.0",
     "lucide-react": "^0.460.0",
     "@google/genai": "^0.3.0",
-    "@supabase/supabase-js": "^2.46.1"
+    "@supabase/supabase-js": "^2.46.1",
+    "three": "^0.170.0",
+    "@react-three/fiber": "^9.0.0",
+    "@react-three/drei": "^10.0.0"
   },
   "devDependencies": {
     "vite": "^6.0.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "@types/three": "^0.170.0"
   },
   "scripts": {
     "dev": "vite",

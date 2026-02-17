@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
+import Features from './components/Features.tsx';
 import CodeSection from './components/CodeSection.tsx';
 import UpdateLog from './components/UpdateLog.tsx';
 import SecretTrigger from './components/SecretTrigger.tsx';
@@ -30,15 +32,13 @@ const App: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const [c, l, b] = await Promise.all([
-        storageService.getCodes(),
-        storageService.getLogs(),
-        storageService.getBranding()
-      ]);
+      const b = await storageService.getBranding();
+      const c = await storageService.getCodes();
+      const l = await storageService.getLogs();
       
+      if (b) setBranding(b);
       if (c && c.length) setCodes(c);
       if (l && l.length) setLogs(l);
-      if (b) setBranding(b);
     } catch (err) {
       console.warn('Data sync issue:', err);
     }
@@ -107,10 +107,13 @@ const App: React.FC = () => {
           />
         </div>
 
+        <div className="reveal">
+          <Features />
+        </div>
+
         <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 space-y-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-start">
             <div className="reveal relative" style={{ transitionDelay: '0.1s' }}>
-              {/* Subtle glow behind section */}
               <div className="absolute -inset-20 bg-[#ff7b00]/5 blur-[100px] -z-10 rounded-full"></div>
               <CodeSection codes={codes} />
             </div>
@@ -121,10 +124,8 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* CTA Section - Responsive Full Width */}
         <section className="py-24 md:py-32 reveal px-6">
            <div className="max-w-5xl mx-auto bg-white/90 backdrop-blur-2xl rounded-[3rem] p-10 md:p-20 flex flex-col items-center text-center shadow-2xl border border-white relative overflow-hidden group">
-              {/* Internal glow for CTA */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-[#ff7b00]/10 to-transparent pointer-events-none opacity-50"></div>
               
               <div className="relative z-10 w-full">
@@ -167,14 +168,13 @@ const App: React.FC = () => {
              <a href="#" onClick={(e) => { e.preventDefault(); setIsPrivacyModalOpen(true); }} className="hover:text-[#ff7b00] transition-colors border-b-2 border-transparent hover:border-[#ff7b00]">Privacy Protocol</a>
              <a href="mailto:fusionhub122@gmail.com" className="hover:text-[#ff7b00] transition-colors border-b-2 border-transparent hover:border-[#ff7b00]">Direct Support</a>
           </div>
-          <p className="mt-20 text-[#86868b] text-[10px] font-black uppercase tracking-[0.6em] opacity-40">© 2025 FUSIONHUB ARCHITECTURE</p>
+          <p className="mt-20 text-[#86868b] text-[10px] font-black uppercase tracking-[0.6em] opacity-40">© 2025 FUSIONHUB OS</p>
         </div>
         <div className="absolute bottom-0 left-0 w-full h-4 bg-[#5865F2] shadow-[0_-10px_30px_rgba(88,101,242,0.2)]"></div>
       </footer>
       
       <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
       
-      {/* Admin Layer */}
       {isAdminModalOpen && (
         <div className="fixed inset-0 z-[200000]">
           {!auth.isLoggedIn ? (

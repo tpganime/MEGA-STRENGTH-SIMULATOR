@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import { GameCode, UpdateLog, Branding } from '../types.ts';
 
@@ -15,7 +16,10 @@ export const storageService = {
   getBranding: async (): Promise<Branding | null> => {
     try {
       const { data, error } = await supabase.from('branding').select('*').eq('id', 1).maybeSingle();
-      if (error) return null;
+      if (error) {
+        console.error("Supabase getBranding error:", error);
+        return null;
+      }
       if (!data) return null;
       
       return {
@@ -23,7 +27,8 @@ export const storageService = {
         banner_url: data.banner_url,
         gameplay_images: Array.isArray(data.gameplay_images) ? data.gameplay_images : (data.gameplay_image_url ? [data.gameplay_image_url] : [])
       };
-    } catch {
+    } catch (err) {
+      console.error("Catch getBranding error:", err);
       return null;
     }
   },
@@ -37,8 +42,14 @@ export const storageService = {
         gameplay_images: branding.gameplay_images,
         gameplay_image_url: branding.gameplay_images[0] || ''
       }, { onConflict: 'id' });
-      return !error;
-    } catch {
+      
+      if (error) {
+        console.error("Supabase upsert error:", error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("Catch saveBranding error:", err);
       return false;
     }
   },
@@ -52,14 +63,18 @@ export const storageService = {
         .from('game-assets')
         .upload(fileName, file, { contentType: file.type });
 
-      if (uploadError) return { url: null, error: uploadError.message };
+      if (uploadError) {
+        console.error("Supabase upload error:", uploadError);
+        return { url: null, error: uploadError.message };
+      }
 
       const { data: urlData } = supabase.storage
         .from('game-assets')
         .getPublicUrl(fileName);
 
       return { url: urlData.publicUrl };
-    } catch {
+    } catch (err) {
+      console.error("Catch upload error:", err);
       return { url: null, error: 'UNKNOWN_ERROR' };
     }
   },
@@ -70,7 +85,10 @@ export const storageService = {
         .from('codes')
         .select('*')
         .order('created_at', { ascending: false });
-      if (error) return [];
+      if (error) {
+        console.error("Supabase getCodes error:", error);
+        return [];
+      }
       return data.map((item: any) => ({
         id: item.id,
         code: item.code,
@@ -89,6 +107,7 @@ export const storageService = {
         is_new: true,
         active: true
       }]);
+      if (error) console.error("Supabase saveCode error:", error);
       return !error;
     } catch { return false; }
   },
