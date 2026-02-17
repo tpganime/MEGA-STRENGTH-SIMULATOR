@@ -72,7 +72,6 @@ const App: React.FC = () => {
   }, []);
 
   const handleLogin = async (email: string, pass: string): Promise<boolean> => {
-    // Admin credentials provided by the user
     const ADMIN_EMAIL = 'fusionhub122@gmail.com';
     const ADMIN_PASS = 'Tanmay@2008';
     
@@ -80,7 +79,8 @@ const App: React.FC = () => {
       const session = { isLoggedIn: true, email };
       setAuth(session);
       localStorage.setItem('mss_admin_auth', JSON.stringify(session));
-      setIsAdminModalOpen(false);
+      // Once logged in, show the dashboard
+      setIsAdminModalOpen(true);
       return true;
     }
     return false;
@@ -92,14 +92,22 @@ const App: React.FC = () => {
     setIsAdminModalOpen(false);
   };
 
+  const handleOpenAdmin = () => {
+    setIsAdminModalOpen(true);
+  };
+
+  const handleCloseAdmin = () => {
+    setIsAdminModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white">
-      <Navbar logoUrl={branding.logo_url} onOpenAdmin={() => setIsAdminModalOpen(true)} />
+      <Navbar logoUrl={branding.logo_url} onOpenAdmin={handleOpenAdmin} />
       
       <main>
         <Hero 
           bannerUrl={branding.banner_url} 
-          onOpenAdmin={() => setIsAdminModalOpen(true)} 
+          onOpenAdmin={handleOpenAdmin} 
         />
 
         <Features />
@@ -147,21 +155,22 @@ const App: React.FC = () => {
         </div>
       </footer>
       
-      <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
+      <SecretTrigger onClick={handleOpenAdmin} />
       
       <AdminLogin 
         isOpen={isAdminModalOpen && !auth.isLoggedIn} 
-        onClose={() => setIsAdminModalOpen(false)} 
+        onClose={handleCloseAdmin} 
         onLogin={handleLogin} 
       />
 
-      {auth.isLoggedIn && (
+      {isAdminModalOpen && auth.isLoggedIn && (
         <AdminDashboard 
           branding={branding} 
           codes={codes} 
           logs={logs} 
           onRefresh={fetchData} 
           onLogout={handleLogout} 
+          onClose={handleCloseAdmin}
         />
       )}
     </div>

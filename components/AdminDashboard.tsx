@@ -1,4 +1,4 @@
-import { Plus, LogOut, Code, FileText, Image as ImageIcon, Upload, X, Database, Save } from 'lucide-react';
+import { Plus, LogOut, Save, Code, FileText, Image as ImageIcon, Upload, X, Database } from 'lucide-react';
 import React from 'react';
 import { GameCode, UpdateLog, Branding } from '../types.ts';
 import { storageService } from '../services/storageService.ts';
@@ -9,9 +9,10 @@ interface Props {
   logs: UpdateLog[];
   onRefresh: () => void;
   onLogout: () => void;
+  onClose?: () => void;
 }
 
-const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onLogout }) => {
+const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onLogout, onClose }) => {
   const [newCode, setNewCode] = React.useState({ code: '', reward: '' });
   const [newLog, setNewLog] = React.useState({ title: '', content: '' });
   const [editBranding, setEditBranding] = React.useState<Branding>(branding);
@@ -100,10 +101,17 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
               {status.message}
             </div>
           )}
-          <button onClick={onLogout} className="text-[#1d1d1f] hover:text-red-500 transition-colors font-black text-xs flex items-center gap-2 uppercase tracking-widest">
-            <LogOut size={16} />
-            LOGOUT
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={onLogout} className="text-gray-500 hover:text-red-500 transition-colors font-black text-xs flex items-center gap-2 uppercase tracking-widest">
+              <LogOut size={16} />
+              LOGOUT
+            </button>
+            {onClose && (
+              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-[#1d1d1f] transition-all">
+                <X size={24} />
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 

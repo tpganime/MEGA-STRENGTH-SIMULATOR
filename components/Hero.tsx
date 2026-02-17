@@ -12,11 +12,10 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
   return (
     <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-12 overflow-hidden card-3d">
       <div className="relative z-20 text-center px-4 w-full max-w-5xl transform-style-3d">
-        {/* Updated Join Simulation Button to open Admin Panel */}
         <div className="mb-12">
             <button 
                 onClick={onOpenAdmin}
-                className="liquid-glass inline-flex items-center gap-3 px-8 py-3 group hover:scale-110 active:scale-95 cursor-pointer z-30 outline-none border-white/40"
+                className="liquid-glass inline-flex items-center gap-3 px-8 py-3 group hover:scale-110 active:scale-95 cursor-pointer z-30 outline-none border-white/40 pointer-events-auto"
             >
                 <div className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -26,7 +25,6 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
             </button>
         </div>
         
-        {/* Title Stack */}
         <div className="mb-16 transform-style-3d">
             <h1 className="text-[clamp(3rem,15vw,9rem)] font-bangers tracking-tight leading-[0.85] uppercase select-none transform-style-3d">
                 <span className="block text-[#1d1d1f]/10 text-[clamp(1rem,4vw,3rem)] tracking-[0.8em] font-black mb-6">FUSIONHUB</span>
@@ -36,7 +34,6 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
             </h1>
         </div>
 
-        {/* Primary Action Button - Still points to Roblox */}
         <div className="flex justify-center mt-12 relative z-40">
           <a 
             href={ROBLOX_LINK}
@@ -50,7 +47,6 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
         </div>
       </div>
 
-      {/* Hero Visual Preview */}
       <div className="mt-24 w-full max-w-6xl px-4 relative z-10">
         <div 
           className="relative liquid-glass overflow-hidden aspect-video shadow-2xl transition-all duration-1000 transform hover:rotate-y-[5deg]"
@@ -65,7 +61,6 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
         </div>
       </div>
       
-      {/* Visual Decoration */}
       <div className="w-full max-w-md mt-20 px-8 opacity-50">
         <div className="spectral-bar w-full"></div>
       </div>
