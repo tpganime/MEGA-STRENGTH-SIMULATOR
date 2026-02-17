@@ -11,6 +11,6 @@
   },
   "scripts": {
     "dev": "echo 'No local dev server required. Open index.html in a browser.'",
-    "build": "echo 'Static deployment: No build step required.'"
+    "build": "mkdir -p dist && cp index.html index.tsx App.tsx types.ts metadata.json vercel.json dist/ && cp -r components services dist/ 2>/dev/null || true"
   }
 }
