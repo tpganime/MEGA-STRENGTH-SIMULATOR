@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { GameCode, UpdateLog, Branding } from '../types.ts';
 
@@ -35,21 +34,33 @@ export const storageService = {
 
   saveBranding: async (branding: Branding): Promise<boolean> => {
     try {
-      const { error } = await supabase.from('branding').upsert({
+      // First, attempt to save using all possible column formats to handle schema variations
+      const payload: any = {
         id: 1,
         logo_url: branding.logo_url,
         banner_url: branding.banner_url,
-        gameplay_images: branding.gameplay_images,
-        gameplay_image_url: branding.gameplay_images[0] || ''
-      }, { onConflict: 'id' });
+        gameplay_image_url: branding.gameplay_images[0] || '',
+        gameplay_images: branding.gameplay_images
+      };
+
+      const { error } = await supabase.from('branding').upsert(payload, { onConflict: 'id' });
       
       if (error) {
-        console.error("Supabase upsert error:", error);
+        console.error("Supabase primary save attempt failed:", error);
+        
+        // Fallback: If 'gameplay_images' column is missing, try saving without it
+        if (error.message?.includes('column "gameplay_images" does not exist')) {
+            const fallbackPayload = { ...payload };
+            delete fallbackPayload.gameplay_images;
+            const { error: fallbackError } = await supabase.from('branding').upsert(fallbackPayload, { onConflict: 'id' });
+            if (!fallbackError) return true;
+            console.error("Fallback save also failed:", fallbackError);
+        }
         return false;
       }
       return true;
     } catch (err) {
-      console.error("Catch saveBranding error:", err);
+      console.error("Critical error in saveBranding:", err);
       return false;
     }
   },

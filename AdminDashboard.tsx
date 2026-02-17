@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, LogOut, Save, Code, FileText, Image as ImageIcon, 
   Upload, X, Database, Trash2, Layout, Settings, 
-  ChevronRight, Activity, Globe, Zap, BarChart3
+  ChevronRight, Activity, Globe, Zap, BarChart3, AlertCircle
 } from 'lucide-react';
 import { GameCode, UpdateLog, Branding } from './types.ts';
 import { storageService } from './services/storageService.ts';
@@ -33,7 +32,9 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
   const showStatus = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
     setStatus({ message: msg, type });
-    setTimeout(() => setStatus({ message: '', type: 'info' }), 5000);
+    // Keep error messages visible longer so the user can read the console advice
+    const duration = type === 'error' ? 8000 : 5000;
+    setTimeout(() => setStatus({ message: '', type: 'info' }), duration);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'banner' | 'gameplay') => {
@@ -54,7 +55,7 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
         }
         showStatus(`${type.toUpperCase()} Synchronized!`, 'success');
       } else {
-        showStatus(`Upload failed: ${result.error || 'Unknown error'}`, 'error');
+        showStatus(`Upload failed: ${result.error || 'Check permissions'}`, 'error');
       }
     } catch (err) {
       showStatus('Transmission failed.', 'error');
@@ -72,10 +73,10 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
         showStatus('Global branding updated!', 'success');
         onRefresh();
       } else {
-        showStatus('Commit failed. Check console for details.', 'error');
+        showStatus('COMMIT FAILED. Press F12 to check console for specific DB error.', 'error');
       }
     } catch (err) {
-      showStatus('Critical save error.', 'error');
+      showStatus('Critical save error occurred.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -91,7 +92,7 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
         onRefresh();
         showStatus('Reward code live!', 'success');
       } else {
-        showStatus('Failed to add code.', 'error');
+        showStatus('Failed to add code. DB error.', 'error');
       }
     } finally {
       setIsProcessing(false);
@@ -176,10 +177,11 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
           <div className="flex items-center gap-6">
             {status.message && (
-              <div className={`text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3 rounded-full shadow-2xl ${
-                status.type === 'error' ? 'bg-red-500 text-white animate-bounce' : 
+              <div className={`text-[10px] font-black uppercase tracking-[0.3em] px-8 py-3 rounded-full shadow-2xl flex items-center gap-3 ${
+                status.type === 'error' ? 'bg-red-500 text-white animate-pulse' : 
                 status.type === 'success' ? 'bg-[#34C759] text-white' : 'bg-[#1d1d1f] text-white'
               }`}>
+                {status.type === 'error' && <AlertCircle size={14} />}
                 {status.message}
               </div>
             )}
