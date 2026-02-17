@@ -71,7 +71,7 @@ const App: React.FC = () => {
       }
     }
 
-    // Scroll Animation Observer
+    // High Performance Multidimensional Observer
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -79,13 +79,13 @@ const App: React.FC = () => {
         }
       });
     }, { 
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px' // Start animation slightly before they are fully in view
+      threshold: 0.05,
+      rootMargin: '0px 0px -100px 0px'
     });
 
     const timer = setTimeout(() => {
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    }, 100);
+    }, 150);
 
     return () => {
       observer.disconnect();
@@ -127,10 +127,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white">
+    <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white overflow-x-hidden" style={{ transformStyle: 'preserve-3d' }}>
       <Navbar logoUrl={branding.logo_url} onOpenAdmin={handleOpenAdmin} />
       
-      <main>
+      <main className="relative" style={{ transformStyle: 'preserve-3d' }}>
+        {/* 2D/3D Hero */}
         <div className="reveal">
           <Hero 
             bannerUrl={branding.banner_url} 
@@ -138,27 +139,29 @@ const App: React.FC = () => {
           />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-40">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-            <div className="reveal">
+        {/* 3D Grid Content */}
+        <div className="max-w-7xl mx-auto px-4 py-40" style={{ transformStyle: 'preserve-3d' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start" style={{ transformStyle: 'preserve-3d' }}>
+            <div className="reveal" style={{ transitionDelay: '0.1s' }}>
               <CodeSection codes={codes} />
             </div>
-            <div className="reveal" style={{ transitionDelay: '0.2s' }}>
+            <div className="reveal" style={{ transitionDelay: '0.3s' }}>
               <UpdateLog logs={logs} />
             </div>
           </div>
         </div>
 
-        <section className="py-40 bg-white/30 backdrop-blur-md reveal">
-          <div className="max-w-7xl mx-auto px-4">
-             <div className="liquid-glass p-16 md:p-24 rounded-[4rem] flex flex-col items-center text-center shadow-3xl">
-                <div className="max-w-3xl">
-                  <h2 className="text-6xl md:text-8xl font-black text-[#1d1d1f] mb-10 uppercase italic tracking-tighter">
+        {/* 4D Immersive Section */}
+        <section className="py-40 bg-white/20 backdrop-blur-3xl reveal" style={{ transformStyle: 'preserve-3d' }}>
+          <div className="max-w-7xl mx-auto px-4" style={{ transformStyle: 'preserve-3d' }}>
+             <div className="liquid-glass p-16 md:p-24 rounded-[4rem] flex flex-col items-center text-center shadow-3xl group" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="max-w-3xl" style={{ transform: 'translateZ(50px)' }}>
+                  <h2 className="text-6xl md:text-8xl font-black text-[#1d1d1f] mb-10 uppercase italic tracking-tighter transition-all group-hover:tracking-normal">
                     JOIN THE <span className="text-[#ff7b00]">MEGA STRENGTH</span> SIMULATOR
                   </h2>
-                  <p className="text-[#86868b] text-2xl font-bold mb-16 leading-relaxed uppercase tracking-widest">Connect with our core developer network and thousands of active titans.</p>
+                  <p className="text-[#86868b] text-2xl font-bold mb-16 leading-relaxed uppercase tracking-widest opacity-80">Connect with our core developer network and thousands of active titans.</p>
                 </div>
-                <div className="flex flex-wrap justify-center gap-10">
+                <div className="flex flex-wrap justify-center gap-10" style={{ transform: 'translateZ(100px)' }}>
                    <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="bg-[#5865F2] text-white px-16 py-8 rounded-[30px] font-black text-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-5 shadow-2xl italic uppercase tracking-widest cursor-pointer">
                       <MessageSquare size={32} />
                       DISCORD
@@ -173,11 +176,11 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      <footer className="py-40 px-4 text-center border-t border-black/5 reveal">
-        <div className="max-w-7xl mx-auto">
+      <footer className="py-40 px-4 text-center border-t border-black/5 reveal" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="max-w-7xl mx-auto" style={{ transform: 'translateZ(20px)' }}>
           <h2 className="font-bangers text-[10vw] md:text-[8rem] text-black/5 select-none mb-16 leading-none uppercase">MEGA STRENGTH SIMULATOR</h2>
           <div className="flex justify-center flex-wrap gap-12 text-[#1d1d1f] font-black text-sm uppercase tracking-[0.4em] italic">
-             <a href="#" onClick={togglePrivacy} className="hover:text-[#ff7b00] transition-colors">Privacy Policy</a>
+             <a href="#" onClick={togglePrivacy} className="hover:text-[#ff7b00] transition-colors cursor-pointer">Privacy Policy</a>
              <a href="mailto:fusionhub122@gmail.com" className="hover:text-[#ff7b00] transition-colors">Support</a>
           </div>
           <p className="mt-20 text-[#86868b] text-xs font-black uppercase tracking-[0.6em]">© 2025 FUSIONHUB STUDIO</p>

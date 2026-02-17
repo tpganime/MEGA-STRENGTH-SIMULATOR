@@ -9,7 +9,7 @@ interface HeroProps {
 }
 
 const MetadataBadge: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
-  <div className="liquid-glass px-6 py-3 flex items-center gap-3 border-white/50">
+  <div className="liquid-glass px-6 py-3 flex items-center gap-3 border-white/50 transition-all hover:scale-105">
     <div className="text-[#1d1d1f]">{icon}</div>
     <div className="flex flex-col items-start leading-none">
       <span className="text-[9px] font-black text-[#86868b] uppercase tracking-widest mb-1">{label}</span>
@@ -20,9 +20,9 @@ const MetadataBadge: React.FC<{ icon: React.ReactNode; label: string; value: str
 
 const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
   return (
-    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-12 overflow-hidden card-3d">
-      <div className="relative z-20 text-center px-4 w-full max-w-5xl transform-style-3d">
-        <div className="mb-12 flex flex-col items-center gap-8">
+    <section id="home" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-12 overflow-hidden" style={{ transformStyle: 'preserve-3d' }}>
+      <div className="relative z-20 text-center px-4 w-full max-w-5xl" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="mb-12 flex flex-col items-center gap-8" style={{ transform: 'translateZ(40px)' }}>
             <button 
                 onClick={onOpenAdmin}
                 className="liquid-glass inline-flex items-center gap-3 px-8 py-3 group hover:scale-110 active:scale-95 cursor-pointer z-30 outline-none border-white/40 pointer-events-auto"
@@ -54,21 +54,21 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
             </div>
         </div>
         
-        <div className="mb-16 transform-style-3d">
-            <h1 className="text-[clamp(3rem,15vw,9rem)] font-bangers tracking-tight leading-[0.85] uppercase select-none transform-style-3d">
+        <div className="mb-16" style={{ transform: 'translateZ(80px)' }}>
+            <h1 className="text-[clamp(3rem,15vw,9rem)] font-bangers tracking-tight leading-[0.85] uppercase select-none">
                 <span className="block text-[#1d1d1f]/10 text-[clamp(1rem,4vw,3rem)] tracking-[0.8em] font-black mb-6">FUSIONHUB</span>
-                <span className="block text-[#1d1d1f]" style={{ textShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>MEGA</span>
-                <span className="block text-[#ff7b00]" style={{ filter: 'drop-shadow(0 10px 20px rgba(255,123,0,0.3))' }}>STRENGTH</span>
+                <span className="block text-[#1d1d1f] drop-shadow-2xl">MEGA</span>
+                <span className="block text-[#ff7b00]" style={{ filter: 'drop-shadow(0 10px 30px rgba(255,123,0,0.4))' }}>STRENGTH</span>
                 <span className="block text-[#1d1d1f]/5 text-[clamp(1.5rem,6vw,5rem)] mt-4 tracking-[0.6em] font-black">SIMULATOR</span>
             </h1>
         </div>
 
-        <div className="flex justify-center mt-12 relative z-40">
+        <div className="flex justify-center mt-12 relative z-40" style={{ transform: 'translateZ(120px)' }}>
           <a 
             href={ROBLOX_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative liquid-glass !bg-[#1d1d1f] !border-transparent text-white font-black text-2xl md:text-4xl px-16 md:px-24 py-8 md:py-10 rounded-[40px] hover:scale-110 active:scale-95 transition-all shadow-[0_30px_60px_rgba(0,0,0,0.2)] uppercase italic flex items-center justify-center gap-6 cursor-pointer pointer-events-auto"
+            className="group relative liquid-glass !bg-[#1d1d1f] !border-transparent text-white font-black text-2xl md:text-4xl px-16 md:px-24 py-8 md:py-10 rounded-[40px] hover:scale-110 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] active:scale-95 transition-all shadow-[0_30px_60px_rgba(0,0,0,0.2)] uppercase italic flex items-center justify-center gap-6 cursor-pointer pointer-events-auto"
           >
             <Play fill="white" size={32} className="md:w-10 md:h-10 transition-transform group-hover:scale-125" />
             PLAY NOW
@@ -76,21 +76,23 @@ const Hero: React.FC<HeroProps> = ({ bannerUrl, onOpenAdmin }) => {
         </div>
       </div>
 
-      <div className="mt-24 w-full max-w-6xl px-4 relative z-10">
+      <div className="mt-24 w-full max-w-6xl px-4 relative z-10" style={{ transform: 'rotateX(8deg) translateZ(-50px)', transformStyle: 'preserve-3d' }}>
         <div 
-          className="relative liquid-glass overflow-hidden aspect-video shadow-2xl transition-all duration-1000 transform hover:rotate-y-[5deg]"
-          style={{ transform: 'rotateX(5deg)' }}
+          className="relative liquid-glass overflow-hidden aspect-video shadow-3xl transition-all duration-1000 group hover:rotate-y-[2deg] hover:rotate-x-[2deg]"
         >
            <img 
             src={bannerUrl} 
             alt="Gameplay Preview" 
-            className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
+            className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-2000"
            />
-           <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none"></div>
+           <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none"></div>
+           
+           {/* 4D Glow Overlay */}
+           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-tr from-[#ff7b00]/20 via-transparent to-[#3a86ff]/20"></div>
         </div>
       </div>
       
-      <div className="w-full max-w-md mt-20 px-8 opacity-50">
+      <div className="w-full max-w-md mt-20 px-8 opacity-40" style={{ transform: 'translateZ(10px)' }}>
         <div className="spectral-bar w-full"></div>
       </div>
     </section>

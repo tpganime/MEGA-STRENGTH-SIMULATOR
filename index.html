@@ -21,6 +21,8 @@
             --glass-border: rgba(255, 255, 255, 0.7);
             --mouse-x: 0.5;
             --mouse-y: 0.5;
+            --dimension-factor: 0; /* 4D Time/Scroll state */
+            --hue-rotate: calc(var(--dimension-factor) * 120deg);
         }
         
         body { 
@@ -30,12 +32,13 @@
             margin: 0;
             overflow-x: hidden;
             min-height: 100vh;
-            perspective: 2000px;
+            /* 3D Root Perspective */
+            perspective: 1200px;
         }
 
         .font-bangers { font-family: 'Bangers', cursive; }
 
-        /* Persistent Aurora Background for PC & Mobile */
+        /* 4D Persistent Background */
         .bg-system {
             position: fixed;
             inset: 0;
@@ -43,6 +46,8 @@
             overflow: hidden;
             background: #ffffff;
             transform: translateZ(0); 
+            filter: hue-rotate(var(--hue-rotate)); /* 4D State Shift */
+            transition: filter 0.5s ease-out;
         }
 
         .aurora-blob {
@@ -51,7 +56,7 @@
             height: 100vw;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.22; /* Increased opacity slightly for better mobile visibility */
+            opacity: 0.25;
             pointer-events: none;
             animation: drift 25s infinite alternate ease-in-out;
             will-change: transform;
@@ -62,7 +67,6 @@
                 width: 80vw;
                 height: 80vw;
                 filter: blur(120px);
-                opacity: 0.15;
             }
         }
 
@@ -71,8 +75,8 @@
         .blob-3 { background: var(--brand-purple); top: 30%; left: 20%; width: 70vw; height: 70vw; animation-delay: -10s; }
 
         @keyframes drift {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(15%, 15%) scale(1.1); }
+            from { transform: translate(0, 0) scale(1) rotate(0deg); }
+            to { transform: translate(15%, 15%) scale(1.1) rotate(15deg); }
         }
 
         .grid-background {
@@ -85,33 +89,27 @@
             background-position: center;
             z-index: -2;
             pointer-events: none;
+            opacity: calc(0.3 + (var(--dimension-factor) * 0.5));
         }
 
-        .temporal-warp {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(
-                600px circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), 
-                rgba(255, 123, 0, 0.12) 0%, 
-                rgba(58, 134, 255, 0.08) 40%,
-                transparent 80%
-            );
-            z-index: -1;
-            filter: blur(40px);
-            pointer-events: none;
-        }
-
-        /* Scroll Reveal Utility Classes */
+        /* Multidimensional Scroll Classes */
         .reveal {
           opacity: 0;
-          transform: translateY(40px);
-          transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-          will-change: opacity, transform;
+          /* 3D + 2D initial state */
+          transform: translateY(60px) rotateX(25deg) scale(0.95);
+          filter: blur(10px);
+          transition: 
+            opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+            filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform, filter;
+          transform-origin: center bottom;
         }
 
         .reveal.active {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) rotateX(0deg) scale(1);
+          filter: blur(0px);
         }
 
         .liquid-glass {
@@ -129,16 +127,15 @@
 
         .liquid-glass:hover {
             border-color: rgba(255, 255, 255, 1);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px) rotateX(2deg) rotateY(1deg);
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.15);
         }
 
-        .card-3d { transform-style: preserve-3d; }
-        
         .spectral-bar {
             background: linear-gradient(90deg, #3a86ff, #8338ec, #ff006e, #fb5607, #ffbe0b, #34C759);
             height: 12px;
             border-radius: 99px;
+            transition: width 0.5s ease;
         }
 
         #initial-loader {
@@ -200,6 +197,12 @@
             const y = e.clientY / window.innerHeight;
             document.documentElement.style.setProperty('--mouse-x', x);
             document.documentElement.style.setProperty('--mouse-y', y);
+        });
+
+        // 4D Time-Dimension Scroll Listener
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            document.documentElement.style.setProperty('--dimension-factor', scrollPercent.toFixed(3));
         });
     </script>
 </body>
