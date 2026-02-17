@@ -32,8 +32,8 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
 
   const showStatus = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
     setStatus({ message: msg, type });
-    // Keep error messages visible longer so the user can read the console advice
-    const duration = type === 'error' ? 8000 : 5000;
+    // Keep error messages visible longer so the user can read the specific error
+    const duration = type === 'error' ? 12000 : 5000;
     setTimeout(() => setStatus({ message: '', type: 'info' }), duration);
   };
 
@@ -68,15 +68,16 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
     setIsProcessing(true);
     showStatus('Saving configuration...', 'info');
     try {
-      const success = await storageService.saveBranding(editBranding);
-      if (success) {
+      const result = await storageService.saveBranding(editBranding);
+      if (result.success) {
         showStatus('Global branding updated!', 'success');
         onRefresh();
       } else {
-        showStatus('COMMIT FAILED. Press F12 to check console for specific DB error.', 'error');
+        // Log specifically what failed
+        showStatus(`COMMIT FAILED: ${result.error || 'Check Console (F12)'}`, 'error');
       }
-    } catch (err) {
-      showStatus('Critical save error occurred.', 'error');
+    } catch (err: any) {
+      showStatus(`CRITICAL ERROR: ${err.message}`, 'error');
     } finally {
       setIsProcessing(false);
     }

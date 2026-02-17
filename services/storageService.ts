@@ -32,36 +32,42 @@ export const storageService = {
     }
   },
 
-  saveBranding: async (branding: Branding): Promise<boolean> => {
+  saveBranding: async (branding: Branding): Promise<{ success: boolean; error?: string }> => {
     try {
-      // First, attempt to save using all possible column formats to handle schema variations
-      const payload: any = {
+      // First, try a comprehensive payload
+      const fullPayload: any = {
         id: 1,
         logo_url: branding.logo_url,
         banner_url: branding.banner_url,
-        gameplay_image_url: branding.gameplay_images[0] || '',
-        gameplay_images: branding.gameplay_images
+        gameplay_images: branding.gameplay_images,
+        gameplay_image_url: branding.gameplay_images[0] || ''
       };
 
-      const { error } = await supabase.from('branding').upsert(payload, { onConflict: 'id' });
+      const { error: primaryError } = await supabase.from('branding').upsert(fullPayload, { onConflict: 'id' });
       
-      if (error) {
-        console.error("Supabase primary save attempt failed:", error);
-        
-        // Fallback: If 'gameplay_images' column is missing, try saving without it
-        if (error.message?.includes('column "gameplay_images" does not exist')) {
-            const fallbackPayload = { ...payload };
-            delete fallbackPayload.gameplay_images;
-            const { error: fallbackError } = await supabase.from('branding').upsert(fallbackPayload, { onConflict: 'id' });
-            if (!fallbackError) return true;
-            console.error("Fallback save also failed:", fallbackError);
-        }
-        return false;
+      if (!primaryError) return { success: true };
+
+      console.warn("Primary save attempt failed, trying minimal fallback. Error:", primaryError);
+
+      // Minimal Fallback: Try only the most common columns if the first one fails (400 Bad Request)
+      const minimalPayload = {
+        id: 1,
+        logo_url: branding.logo_url,
+        banner_url: branding.banner_url
+      };
+
+      const { error: fallbackError } = await supabase.from('branding').upsert(minimalPayload, { onConflict: 'id' });
+
+      if (!fallbackError) {
+        console.log("Minimal fallback save succeeded.");
+        return { success: true };
       }
-      return true;
-    } catch (err) {
-      console.error("Critical error in saveBranding:", err);
-      return false;
+
+      console.error("Critical: All save attempts failed.", fallbackError);
+      return { success: false, error: fallbackError.message || JSON.stringify(fallbackError) };
+    } catch (err: any) {
+      console.error("Exception in saveBranding:", err);
+      return { success: false, error: err.message || 'Unknown Exception' };
     }
   },
 
