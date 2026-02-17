@@ -1,5 +1,5 @@
 
-import { Plus, Trash2, LogOut, Save, Code, FileText, Wand2, Image as ImageIcon, CheckCircle2, Upload, Loader2, AlertCircle, Info, Copy, X } from 'lucide-react';
+import { Plus, Trash2, LogOut, Save, Code, FileText, Wand2, Image as ImageIcon, CheckCircle2, Upload, Loader2, AlertCircle, Info, Copy, X, Database } from 'lucide-react';
 import React from 'react';
 import { GameCode, UpdateLog, Branding } from '../types';
 import { GoogleGenAI } from '@google/genai';
@@ -32,11 +32,13 @@ const AdminDashboard: React.FC<Props> = ({ branding, codes, logs, onRefresh, onL
   };
 
   const copySqlFix = () => {
-    const sql = `-- Run this in Supabase SQL Editor to fix Table Structure
+    const sql = `-- REPAIR SCRIPT FOR MEGA STRENGTH SIMULATOR
+-- Run this in Supabase SQL Editor to fix Table Structure
 ALTER TABLE branding ADD COLUMN IF NOT EXISTS gameplay_images JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE branding ADD COLUMN IF NOT EXISTS gameplay_image_url TEXT;
 INSERT INTO branding (id, logo_url, banner_url, gameplay_images, gameplay_image_url) 
-VALUES (1, '', '', '[]', '') ON CONFLICT (id) DO NOTHING;
+VALUES (1, 'https://r2.erweima.ai/i/qL7N00zRRaS0kQh_pG_W7A.png', 'https://r2.erweima.ai/i/qL7N00zRRaS0kQh_pG_W7A.png', '[]', '') 
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('game-assets', 'game-assets', true) ON CONFLICT (id) DO NOTHING;
 DROP POLICY IF EXISTS "Public Access" ON storage.objects;
 DROP POLICY IF EXISTS "Public Upload" ON storage.objects;
@@ -71,7 +73,7 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
         }
         showStatus(`${type.toUpperCase()} uploaded! Click PUBLISH to save.`, 'success');
       } else if (result.error === 'BUCKET_NOT_FOUND') {
-        setSetupError('STORAGE BUCKET MISSING: Please run the SQL fix below.');
+        setSetupError('STORAGE BUCKET MISSING: Please run the SQL fix below to create the "game-assets" bucket.');
         showStatus('Upload failed: Bucket not found.', 'error');
       } else {
         showStatus(`Upload failed: ${result.error}`, 'error');
@@ -117,7 +119,7 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
       showStatus('Game branding published successfully!', 'success');
       onRefresh();
     } else {
-      setSetupError('Database structure mismatch. Run the SQL fix to add the "gameplay_images" column.');
+      setSetupError('Database structure mismatch. You MUST run the SQL fix to add the "gameplay_images" column.');
       showStatus('Failed to save. Check database column.', 'error');
     }
   };
@@ -167,9 +169,9 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
               {status.message}
             </div>
           )}
-          <button onClick={onLogout} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg border border-white/5">
-            <LogOut className="w-5 h-5" />
-            <span className="hidden sm:inline font-bold">EXIT</span>
+          <button onClick={onLogout} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg border border-white/5 font-black uppercase text-xs">
+            <LogOut className="w-4 h-4" />
+            <span>LOGOUT</span>
           </button>
         </div>
       </nav>
@@ -179,23 +181,21 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
           <div className="mb-8 p-6 bg-red-500/10 border border-red-500/30 rounded-3xl flex flex-col md:flex-row items-start gap-4 animate-pulse">
             <AlertCircle className="w-8 h-8 text-red-500 shrink-0" />
             <div className="flex-1">
-              <h3 className="text-red-500 font-black text-xl mb-1 uppercase">DATABASE FIX REQUIRED</h3>
-              <p className="text-red-400/80 mb-4 text-sm">{setupError}</p>
-              <div className="flex flex-col sm:flex-row gap-3 items-center">
-                <button 
-                  onClick={copySqlFix}
-                  className="bg-red-500 text-white font-black px-4 py-2 rounded-lg text-xs flex items-center gap-2 hover:bg-red-600 transition-colors shrink-0"
-                >
-                  <Copy className="w-3 h-3" /> COPY SQL REPAIR SCRIPT
-                </button>
-              </div>
+              <h3 className="text-red-500 font-black text-xl mb-1 uppercase tracking-tighter">ACTION REQUIRED: DATABASE REPAIR</h3>
+              <p className="text-red-400/80 mb-4 text-sm font-medium">{setupError}</p>
+              <button 
+                onClick={copySqlFix}
+                className="bg-red-500 text-white font-black px-6 py-3 rounded-xl text-sm flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg active:scale-95"
+              >
+                <Database className="w-4 h-4" /> COPY SQL REPAIR SCRIPT
+              </button>
             </div>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-3 space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <ImageIcon className="w-8 h-8 text-[#00BFFF]" />
                 <h2 className="text-3xl font-bangers text-white tracking-widest uppercase">BRANDING CONTROL</h2>
@@ -203,16 +203,16 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
               <button 
                   onClick={handleSaveBranding} 
                   disabled={isUploading}
-                  className="bg-neon-orange text-black font-black px-8 py-3 rounded-2xl flex items-center gap-3 hover:scale-105 transition-all shadow-lg disabled:opacity-50"
+                  className="bg-neon-orange text-black font-black px-8 py-4 rounded-2xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" /> PUBLISH ALL CHANGES
                 </button>
             </div>
 
-            <div className="bg-zinc-900/40 p-8 rounded-[3rem] border border-white/5 grid grid-cols-1 md:grid-cols-2 gap-8 backdrop-blur-sm">
+            <div className="bg-zinc-900/40 p-8 rounded-[3rem] border border-white/5 grid grid-cols-1 md:grid-cols-2 gap-8 backdrop-blur-sm shadow-2xl">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <label className="text-xs text-gray-500 uppercase font-black tracking-[0.2em] ml-2">Logo (1:1)</label>
+                  <label className="text-xs text-gray-500 uppercase font-black tracking-[0.2em] ml-2">App Icon / Logo (1:1)</label>
                   <div className="relative group w-32 aspect-square bg-black rounded-3xl border-2 border-dashed border-white/10 overflow-hidden hover:border-neon-orange/50 transition-all shadow-inner">
                     <img src={editBranding.logo_url} className="w-full h-full object-contain p-4" />
                     <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity backdrop-blur-md">
@@ -223,7 +223,7 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-xs text-gray-500 uppercase font-black tracking-[0.2em] ml-2">Main Banner (Hero)</label>
+                  <label className="text-xs text-gray-500 uppercase font-black tracking-[0.2em] ml-2">Hero Banner (Background)</label>
                   <div className="relative group aspect-video bg-black rounded-3xl border-2 border-dashed border-white/10 overflow-hidden hover:border-[#00BFFF]/50 transition-all shadow-inner">
                     <img src={editBranding.banner_url} className="w-full h-full object-cover" />
                     <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity backdrop-blur-md">
@@ -239,23 +239,28 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
                 <label className="text-xs text-gray-500 uppercase font-black tracking-[0.2em] ml-2">Showcase Slideshow ({editBranding.gameplay_images.length} Images)</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {editBranding.gameplay_images.map((img, idx) => (
-                    <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
+                    <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group bg-black shadow-lg">
                       <img src={img} className="w-full h-full object-cover" />
                       <button 
                         onClick={() => removeShowcaseImage(idx)}
-                        className="absolute top-1 right-1 p-1.5 bg-red-500/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1.5 right-1.5 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-90"
                       >
-                        <X className="w-3 h-3 text-white" />
+                        <X className="w-3 h-3" />
                       </button>
                     </div>
                   ))}
-                  <label className="aspect-video rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 transition-all bg-white/5">
+                  <label className="aspect-video rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 transition-all bg-white/5 hover:bg-white/10">
                     <Plus className="w-6 h-6 text-gray-500 mb-1" />
                     <span className="text-[9px] font-black text-gray-500 uppercase">ADD SLIDE</span>
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'gameplay')} />
                   </label>
                 </div>
-                <p className="text-[10px] text-zinc-500 italic mt-2">Images will cycle every 3 seconds on the website.</p>
+                <div className="mt-4 p-4 bg-black/40 rounded-2xl border border-white/5 flex items-center gap-3">
+                   <Info className="w-4 h-4 text-[#00BFFF]" />
+                   <p className="text-[10px] text-zinc-400 font-medium leading-relaxed italic">
+                     Showcase images are displayed in a smooth auto-playing slideshow (3s interval) on the main landing page to engage visitors.
+                   </p>
+                </div>
               </div>
             </div>
           </div>
@@ -267,7 +272,7 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
             <div className="bg-zinc-900/50 p-6 rounded-[2rem] border border-white/5 space-y-4 backdrop-blur-sm">
               <div className="flex gap-2">
                 <input 
-                  className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-neon-orange outline-none uppercase font-mono text-white" 
+                  className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-neon-orange outline-none uppercase font-mono text-white placeholder-zinc-700" 
                   placeholder="NEW_CODE" 
                   value={newCode.code} 
                   onChange={(e) => setNewCode({ ...newCode, code: e.target.value })} 
@@ -281,19 +286,19 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
                 </button>
               </div>
               <input 
-                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-neon-orange outline-none text-white" 
-                placeholder="REWARD" 
+                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-neon-orange outline-none text-white placeholder-zinc-700" 
+                placeholder="REWARD (e.g. 5K GEMS)" 
                 value={newCode.reward} 
                 onChange={(e) => setNewCode({ ...newCode, reward: e.target.value })} 
               />
-              <button onClick={addCode} className="w-full bg-white text-black font-black py-4 rounded-xl hover:scale-105 transition-transform active:scale-95">ADD CODE</button>
+              <button onClick={addCode} className="w-full bg-white text-black font-black py-4 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg">ADD CODE</button>
             </div>
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {codes.map(c => (
-                <div key={c.id} className="bg-zinc-900 border border-white/5 p-4 rounded-2xl flex items-center justify-between group hover:border-neon-orange/30 transition-colors">
+                <div key={c.id} className="bg-zinc-900/80 border border-white/5 p-4 rounded-2xl flex items-center justify-between group hover:border-neon-orange/30 transition-colors">
                   <div className="flex flex-col">
-                    <span className="font-mono font-black text-white uppercase tracking-tighter">{c.code}</span>
-                    <span className="text-[10px] text-[#00BFFF] font-bold uppercase tracking-widest">{c.reward}</span>
+                    <span className="font-mono font-black text-white uppercase tracking-tighter text-lg">{c.code}</span>
+                    <span className="text-[10px] text-[#00BFFF] font-black uppercase tracking-widest">{c.reward}</span>
                   </div>
                   <button onClick={() => deleteCode(c.id)} className="text-zinc-600 hover:text-red-500 p-2 transition-colors">
                     <Trash2 className="w-5 h-5" />
@@ -309,25 +314,25 @@ CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (bucket_i
             </h2>
             <div className="bg-zinc-900/50 p-8 rounded-[2rem] border border-white/5 space-y-4 backdrop-blur-sm">
               <input 
-                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-[#00BFFF] outline-none font-bold text-white" 
+                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-[#00BFFF] outline-none font-bold text-white placeholder-zinc-700" 
                 placeholder="UPDATE TITLE" 
                 value={newLog.title} 
                 onChange={(e) => setNewLog({ ...newLog, title: e.target.value })} 
               />
               <textarea 
-                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-[#00BFFF] outline-none h-32 text-gray-300" 
-                placeholder="Description..." 
+                className="w-full bg-black border border-white/10 rounded-xl p-4 text-sm focus:border-[#00BFFF] outline-none h-32 text-gray-300 placeholder-zinc-700" 
+                placeholder="Description of the patch..." 
                 value={newLog.content} 
                 onChange={(e) => setNewLog({ ...newLog, content: e.target.value })} 
               />
-              <button onClick={addLog} className="w-full bg-[#00BFFF] text-black font-black py-5 rounded-xl hover:scale-[1.02] transition-transform active:scale-95">POST UPDATE</button>
+              <button onClick={addLog} className="w-full bg-[#00BFFF] text-black font-black py-5 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg">POST UPDATE</button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {logs.map(l => (
-                <div key={l.id} className="bg-zinc-900/80 p-6 rounded-3xl border border-white/5 flex justify-between items-start">
+                <div key={l.id} className="bg-zinc-900/80 p-6 rounded-3xl border border-white/5 flex justify-between items-start group hover:border-white/10 transition-all">
                   <div>
-                    <h4 className="font-black text-white uppercase italic">{l.title}</h4>
-                    <p className="text-gray-500 text-xs line-clamp-2 mt-1">{l.content}</p>
+                    <h4 className="font-black text-white uppercase italic tracking-tighter text-lg">{l.title}</h4>
+                    <p className="text-gray-500 text-xs line-clamp-3 mt-1 leading-relaxed">{l.content}</p>
                   </div>
                   <button onClick={() => deleteLog(l.id)} className="text-zinc-700 hover:text-red-500 transition-colors">
                     <Trash2 className="w-4 h-4" />

@@ -4,22 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Strength Simulator | Official Site</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Mega Strength Simulator | Official Community Hub</title>
+    <meta name="title" content="Mega Strength Simulator | Official Community Hub">
+    <meta name="description" content="Train, unlock god-like power, and climb the leaderboards in Mega Strength Simulator. Get the latest codes and patch notes here.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mega-strength-simulator.vercel.app/">
+    <meta property="og:title" content="Mega Strength Simulator | Official Hub">
+    <meta property="og:description" content="The ultimate training ground for legends. Redeem exclusive codes and view the latest updates.">
+    <meta property="og:image" content="https://r2.erweima.ai/i/qL7N00zRRaS0kQh_pG_W7A.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Mega Strength Simulator | Official Hub">
+    <meta property="twitter:description" content="The ultimate training ground for legends. Redeem exclusive codes and view the latest updates.">
+    <meta property="twitter:image" content="https://r2.erweima.ai/i/qL7N00zRRaS0kQh_pG_W7A.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --neon-orange: #FF8C00;
+            --neon-blue: #00BFFF;
+        }
         .font-bangers { font-family: 'Bangers', cursive; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; }
-        .neon-orange { color: #FF8C00; text-shadow: 0 0 10px rgba(255, 140, 0, 0.6); }
-        .neon-blue { color: #00BFFF; text-shadow: 0 0 10px rgba(0, 191, 255, 0.6); }
-        .bg-neon-orange { background-color: #FF8C00; box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); }
-        .border-neon-orange { border-color: #FF8C00; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .neon-orange { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 140, 0, 0.4); }
+        .neon-blue { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 191, 255, 0.4); }
+        .bg-neon-orange { background-color: var(--neon-orange); box-shadow: 0 0 20px rgba(255, 140, 0, 0.3); }
+        .border-neon-orange { border-color: var(--neon-orange); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-orange); }
+
         .pulse-orange { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 <script type="importmap">
