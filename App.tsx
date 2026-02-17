@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar.tsx';
 import Hero from './components/Hero.tsx';
-import Features from './components/Features.tsx';
 import CodeSection from './components/CodeSection.tsx';
 import UpdateLog from './components/UpdateLog.tsx';
 import SecretTrigger from './components/SecretTrigger.tsx';
@@ -105,10 +104,6 @@ const App: React.FC = () => {
             bannerUrl={branding.banner_url} 
             onOpenAdmin={() => setIsAdminModalOpen(true)} 
           />
-        </div>
-
-        <div className="reveal">
-          <Features />
         </div>
 
         <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 space-y-32">
