@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { X, Lock, Mail, AlertCircle } from 'lucide-react';
+import { X, AlertCircle } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -21,73 +20,71 @@ const AdminLogin: React.FC<Props> = ({ isOpen, onClose, onLogin }) => {
     setError('');
     setLoading(true);
     
-    const success = await onLogin(email, password);
-    if (!success) {
-      setError('Invalid admin credentials. Access Denied.');
+    try {
+      const success = await onLogin(email, password);
+      if (!success) {
+        setError('Invalid admin credentials.');
+      }
+    } catch (err) {
+      setError('An error occurred during authentication.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={onClose}></div>
-      <div className="relative liquid-glass !rounded-[50px] w-full max-w-md p-10 md:p-12 shadow-2xl card-3d">
-        <button onClick={onClose} className="absolute top-8 right-8 text-white/30 hover:text-white transition-colors">
-          <X className="w-6 h-6" />
+      {/* High contrast overlay to prevent "blurry grey mess" */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity" onClick={onClose}></div>
+      
+      <div className="relative bg-white rounded-[32px] w-full max-w-md p-10 shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/20 animate-in fade-in zoom-in duration-300">
+        <button onClick={onClose} className="absolute top-8 right-8 text-gray-400 hover:text-black transition-colors">
+          <X size={24} />
         </button>
 
         <div className="text-center mb-10">
-          <div className="w-20 h-20 liquid-glass !bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <Lock className="w-10 h-10 text-[#FF8C00]" />
-          </div>
-          <h2 className="text-4xl font-bangers tracking-wide text-white">ADMIN TERMINAL</h2>
-          <p className="text-white/40 text-xs font-black uppercase tracking-[0.3em] mt-2">Authorized Personnel Only</p>
+          <h2 className="text-3xl font-black text-[#1d1d1f] uppercase italic tracking-tighter">ADMIN ACCESS</h2>
+          <p className="text-[#86868b] text-sm mt-2 font-bold uppercase tracking-widest">Core Protocol Authentication</p>
         </div>
 
         {error && (
-          <div className="mb-8 p-5 liquid-glass !bg-red-500/10 !border-red-500/20 text-red-500 rounded-2xl text-sm flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 shrink-0" />
+          <div className="mb-8 p-4 bg-red-50 text-red-600 rounded-2xl text-sm flex items-center gap-3 border border-red-100">
+            <AlertCircle size={20} />
             <span className="font-bold">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="block text-[10px] font-black text-white/30 uppercase tracking-[0.4em] ml-2">Secure Link ID</label>
-            <div className="relative">
-              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
-              <input 
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-white focus:outline-none focus:border-[#FF8C00]/50 transition-all"
-                placeholder="developer@studio.com"
-                required
-              />
-            </div>
+            <label className="block text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-1">Email Terminal</label>
+            <input 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-4 px-6 text-[#1d1d1f] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+              placeholder="admin@studio.com"
+              required
+            />
           </div>
           
           <div className="space-y-2">
-            <label className="block text-[10px] font-black text-white/30 uppercase tracking-[0.4em] ml-2">Access Key</label>
-            <div className="relative">
-              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
-              <input 
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-white focus:outline-none focus:border-[#FF8C00]/50 transition-all"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+            <label className="block text-[10px] font-black text-[#86868b] uppercase tracking-[0.3em] ml-1">Secure Password</label>
+            <input 
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-4 px-6 text-[#1d1d1f] focus:outline-none focus:ring-2 focus:ring-black transition-all font-medium"
+              placeholder="••••••••"
+              required
+            />
           </div>
 
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-white text-black font-black text-xl py-6 rounded-2xl hover:scale-[1.05] active:scale-95 transition-all disabled:opacity-50 disabled:scale-100 uppercase tracking-widest italic"
+            className="w-full bg-[#1d1d1f] text-white font-black text-xl py-5 rounded-2xl hover:bg-black transition-all disabled:opacity-50 uppercase italic tracking-widest shadow-xl active:scale-95"
           >
-            {loading ? 'SYNCING...' : 'INITIATE SESSION'}
+            {loading ? 'AUTHENTICATING...' : 'SIGN IN'}
           </button>
         </form>
       </div>

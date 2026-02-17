@@ -31,8 +31,10 @@ const App: React.FC = () => {
     const loader = document.getElementById('initial-loader');
     if (loader) {
       loader.style.opacity = '0';
-      loader.style.visibility = 'hidden';
-      setTimeout(() => loader.remove(), 600);
+      loader.style.pointerEvents = 'none';
+      setTimeout(() => {
+        if (loader.parentNode) loader.parentNode.removeChild(loader);
+      }, 500);
     }
   };
 
@@ -44,8 +46,8 @@ const App: React.FC = () => {
         storageService.getBranding()
       ]);
       
-      setCodes(c || []);
-      setLogs(l || []);
+      if (c && c.length) setCodes(c);
+      if (l && l.length) setLogs(l);
       if (b) setBranding(b);
     } catch (err) {
       console.warn('Data fetch issue:', err);
@@ -59,7 +61,10 @@ const App: React.FC = () => {
     const storedAuth = localStorage.getItem('mss_admin_auth');
     if (storedAuth) {
       try {
-        setAuth(JSON.parse(storedAuth));
+        const parsed = JSON.parse(storedAuth);
+        if (parsed && parsed.isLoggedIn) {
+          setAuth(parsed);
+        }
       } catch (e) {
         localStorage.removeItem('mss_admin_auth');
       }
@@ -67,8 +72,10 @@ const App: React.FC = () => {
   }, []);
 
   const handleLogin = async (email: string, pass: string): Promise<boolean> => {
+    // Admin credentials provided by the user
     const ADMIN_EMAIL = 'fusionhub122@gmail.com';
     const ADMIN_PASS = 'Tanmay@2008';
+    
     if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
       const session = { isLoggedIn: true, email };
       setAuth(session);
@@ -82,10 +89,11 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setAuth({ isLoggedIn: false, email: null });
     localStorage.removeItem('mss_admin_auth');
+    setIsAdminModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-[#FF8C00] selection:text-black">
+    <div className="min-h-screen selection:bg-[#ff7b00] selection:text-white">
       <Navbar logoUrl={branding.logo_url} onOpenAdmin={() => setIsAdminModalOpen(true)} />
       
       <main>
@@ -96,27 +104,30 @@ const App: React.FC = () => {
 
         <Features />
 
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 py-12 md:py-24">
-          <CodeSection codes={codes} />
-          <UpdateLog logs={logs} />
+        <div className="max-w-7xl mx-auto px-4 py-40">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+            <CodeSection codes={codes} />
+            <UpdateLog logs={logs} />
+          </div>
         </div>
 
-        {/* Community & Socials - Renamed to Game Name */}
-        <section className="py-16 md:py-24 bg-zinc-950">
+        <section className="py-40 bg-white/30 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4">
-             <div className="liquid-glass p-8 md:p-16 rounded-[2rem] md:rounded-[4rem] flex flex-col lg:flex-row items-center justify-between gap-12">
-                <div className="max-w-xl text-center lg:text-left">
-                  <h2 className="text-4xl md:text-6xl font-bangers tracking-wider text-white mb-6 uppercase">JOIN THE <span className="text-[#FF8C00]">MEGA STRENGTH</span> SIMULATOR</h2>
-                  <p className="text-gray-400 text-lg md:text-xl font-medium">Get exclusive sneak peeks and chat with the devs in our official community hubs.</p>
+             <div className="liquid-glass p-16 md:p-24 rounded-[4rem] flex flex-col items-center text-center shadow-3xl">
+                <div className="max-w-3xl">
+                  <h2 className="text-6xl md:text-8xl font-black text-[#1d1d1f] mb-10 uppercase italic tracking-tighter">
+                    JOIN THE <span className="text-[#ff7b00]">MEGA STRENGTH</span> SIMULATOR
+                  </h2>
+                  <p className="text-[#86868b] text-2xl font-bold mb-16 leading-relaxed uppercase tracking-widest">Connect with our core developer network and thousands of active titans.</p>
                 </div>
-                <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-                   <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
-                      <MessageSquare size={24} />
+                <div className="flex flex-wrap justify-center gap-10">
+                   <a href={DISCORD_LINK} target="_blank" rel="noopener noreferrer" className="bg-[#5865F2] text-white px-16 py-8 rounded-[30px] font-black text-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-5 shadow-2xl italic uppercase tracking-widest cursor-pointer">
+                      <MessageSquare size={32} />
                       DISCORD
                    </a>
-                   <a href={ROBLOX_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-zinc-800 hover:bg-zinc-700 px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black text-lg md:text-xl transition-all hover:scale-105">
-                      <ExternalLink size={24} />
-                      ROBLOX GROUP
+                   <a href={ROBLOX_LINK} target="_blank" rel="noopener noreferrer" className="liquid-glass !bg-black text-white px-16 py-8 rounded-[30px] font-black text-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-5 shadow-2xl italic uppercase tracking-widest border-transparent cursor-pointer">
+                      <ExternalLink size={32} />
+                      GROUP
                    </a>
                 </div>
              </div>
@@ -124,29 +135,22 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      <footer className="py-16 md:py-20 px-4 border-t border-white/5 bg-black text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#FF8C00]/50 to-transparent"></div>
+      <footer className="py-40 px-4 text-center border-t border-black/5">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-bangers text-4xl md:text-6xl opacity-10 select-none mb-8 tracking-[1em]">FUSION HUB</h2>
-          <p className="text-zinc-500 font-bold tracking-widest uppercase text-xs md:text-sm">© 2025 FUSIONHUB STUDIO</p>
-          <div className="flex justify-center flex-wrap gap-6 md:gap-8 mt-12 text-zinc-600 font-black text-[10px] uppercase tracking-[0.4em]">
-             <a href="#" className="hover:text-[#FF8C00] transition-colors">Privacy Policy</a>
-             <a href="#" className="hover:text-[#00BFFF] transition-colors">Terms of Service</a>
-             <a href="#" className="hover:text-white transition-colors">Support</a>
-             <button 
-                onClick={() => setIsAdminModalOpen(true)}
-                className="hover:text-red-500 transition-colors uppercase tracking-[0.4em]"
-             >
-                Admin Access
-             </button>
+          <h2 className="font-bangers text-[10vw] md:text-[8rem] text-black/5 select-none mb-16 leading-none uppercase">MEGA STRENGTH SIMULATOR</h2>
+          <div className="flex justify-center flex-wrap gap-12 text-[#1d1d1f] font-black text-sm uppercase tracking-[0.4em] italic">
+             <a href="#" className="hover:text-[#ff7b00] transition-colors">Privacy Policy</a>
+             <a href="#" className="hover:text-[#ff7b00] transition-colors">Terms of Service</a>
+             <a href="#" className="hover:text-[#ff7b00] transition-colors">Support</a>
           </div>
+          <p className="mt-20 text-[#86868b] text-xs font-black uppercase tracking-[0.6em]">© 2025 FUSIONHUB STUDIO DATA SYSTEMS</p>
         </div>
       </footer>
       
       <SecretTrigger onClick={() => setIsAdminModalOpen(true)} />
       
       <AdminLogin 
-        isOpen={isAdminModalOpen} 
+        isOpen={isAdminModalOpen && !auth.isLoggedIn} 
         onClose={() => setIsAdminModalOpen(false)} 
         onLogin={handleLogin} 
       />

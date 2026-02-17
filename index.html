@@ -11,110 +11,96 @@
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-orange: #FF8C00;
-            --neon-blue: #00BFFF;
-            --glass-bg: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --apple-black: #1d1d1f;
+            --apple-gray: #86868b;
+            --apple-bg: #f2f2f7;
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.8);
             --mouse-x: 0.5;
             --mouse-y: 0.5;
         }
-        .font-bangers { font-family: 'Bangers', cursive; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #080808; 
-            color: #ffffff;
+            background-color: var(--apple-bg); 
+            color: var(--apple-black);
             margin: 0;
             overflow-x: hidden;
             min-height: 100vh;
             perspective: 2000px;
         }
 
-        /* Technical Grid Background - Photographic Style */
+        .font-bangers { font-family: 'Bangers', cursive; }
+
+        /* Grid Background */
         .grid-background {
             position: fixed;
             inset: 0;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: clamp(30px, 5vw, 60px) clamp(30px, 5vw, 60px);
+                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
             background-position: center;
             z-index: -2;
             pointer-events: none;
-            opacity: 0.8;
         }
 
+        /* 4D Temporal Warp Effect */
         .temporal-warp {
             position: fixed;
             inset: -20%;
-            background: 
-                radial-gradient(circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), rgba(255, 140, 0, 0.04) 0%, transparent 45%),
-                radial-gradient(circle at calc(100% - (var(--mouse-x) * 100%)) calc(100% - (var(--mouse-y) * 100%)), rgba(0, 191, 255, 0.03) 0%, transparent 45%);
+            background: radial-gradient(
+                circle at calc(var(--mouse-x) * 100%) calc(var(--mouse-y) * 100%), 
+                rgba(255, 255, 255, 0.8) 0%, 
+                transparent 50%
+            );
             z-index: -1;
-            filter: blur(120px);
+            filter: blur(100px);
+            opacity: 0.3;
+            mix-blend-mode: soft-light;
+            pointer-events: none;
         }
 
-        /* High-Fidelity Liquid Glass Effect - Reference Matched */
+        /* Liquid Glass Card Effect */
         .liquid-glass {
             background: var(--glass-bg);
-            backdrop-filter: blur(32px) saturate(180%);
-            border: 1.5px solid var(--glass-border);
-            border-radius: 40px;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
             box-shadow: 
-                0 10px 30px -5px rgba(0, 0, 0, 0.5),
-                inset 0 1px 1px 0 rgba(255, 255, 255, 0.2),
-                inset 0 15px 30px -10px rgba(255, 255, 255, 0.05);
-            transition: all 0.7s cubic-bezier(0.15, 1, 0.3, 1);
+                0 10px 30px -10px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-            overflow: hidden;
-        }
-
-        .liquid-glass::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 35%, transparent 65%, rgba(255,255,255,0.02) 100%);
-            pointer-events: none;
-            z-index: 1;
         }
 
         .liquid-glass:hover {
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-8px) translateZ(40px);
-            box-shadow: 
-                0 45px 90px -25px rgba(0, 0, 0, 0.8),
-                inset 0 1px 2px 0 rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 1);
+            transform: translateY(-4px);
         }
 
         .card-3d { transform-style: preserve-3d; }
-
-        .animate-titan-glow {
-            animation: titanGlow 6s ease-in-out infinite;
-        }
-
-        @keyframes titanGlow {
-            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.15)); text-shadow: 0 0 10px rgba(255, 140, 0, 0.1); }
-            50% { filter: drop-shadow(0 0 60px rgba(255, 140, 0, 0.5)); text-shadow: 0 0 30px rgba(255, 140, 0, 0.3); }
+        
+        .spectral-bar {
+            background: linear-gradient(90deg, #3a86ff, #8338ec, #ff006e, #fb5607, #ffbe0b, #34C759);
+            height: 12px;
+            border-radius: 99px;
         }
 
         #initial-loader {
             position: fixed;
             inset: 0;
-            background: #080808;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 99999;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.5s ease;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .spin { animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
-
-        /* Responsive scaling */
-        @media (max-width: 768px) {
-            .liquid-glass { border-radius: 28px; }
-        }
+        .spin { animation: spin 0.8s linear infinite; }
     </style>
     <script type="importmap">
 {
@@ -124,7 +110,7 @@
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "lucide-react": "https://esm.sh/lucide-react@0.460.0",
-    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.3.0",
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.46.1",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
@@ -133,11 +119,10 @@
 </head>
 <body>
     <div id="initial-loader">
-        <div class="relative w-16 h-16">
-            <div class="absolute inset-0 border border-white/5 rounded-full"></div>
-            <div class="absolute inset-0 border-t border-[#FF8C00] rounded-full spin"></div>
+        <div class="relative w-12 h-12">
+            <div class="absolute inset-0 border-2 border-gray-100 rounded-full"></div>
+            <div class="absolute inset-0 border-t-2 border-[#1d1d1f] rounded-full spin"></div>
         </div>
-        <p class="mt-8 font-bangers tracking-[0.6em] text-white/40 text-xs uppercase animate-pulse">BOOTING SIMULATION</p>
     </div>
     <div class="grid-background"></div>
     <div class="temporal-warp"></div>
